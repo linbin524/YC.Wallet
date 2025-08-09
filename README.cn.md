@@ -12,6 +12,7 @@
 - [English Documentation](README.md)
 - [English User Manual](document/User-Manual-EN.md)
 - [中文用户手册](document/用户使用说明书.md)
+- [youtube Video](https://www.youtube.com/watch?v=js8nmaekmmQ)
 
 ## 📸 界面预览
 
