@@ -300,7 +300,7 @@ namespace YC.WalletApp.ViewModels
 
             detailObj.ForEach(x => {
                 x.CreationTime = DateTime.Now;
-                x.CreatorUserId = DefaultConfig.CurrentLoginUser.Id;
+                //x.CreatorUserId = DefaultConfig.CurrentLoginUser.Id;
             });
             var inserRes = SQLiteUtils._freesql.Insert<TokenDefEntity>(detailObj).ExecuteAffrows();
             currentPage = 1;

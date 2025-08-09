@@ -143,7 +143,7 @@ namespace YC.ApplicationService.Service
                 if (isExist)
                 {
                     state = false;
-                    sb.AppendLine($"主账户为：{obj.Account.PrivateKey}的钱包已经存在！");
+                    sb.AppendLine($"主账户为：{obj.Account.PublicKey.Key}的钱包已经存在！");
                 }
                 else {
                     var insertRes = await SQLiteUtils._freesql.Insert<WalletEntity>(obj).ExecuteAffrowsAsync();
@@ -178,7 +178,15 @@ namespace YC.ApplicationService.Service
             for (int i = 0; i < tokenDefEntityList.Count; i++)
             {
                 var t = tokenDefEntityList[i];
-                tokenDefList.Add(new Solnet.Extensions.TokenMint.TokenDef(t.Mint, t.Name, t.Symbol, t.DecimalPlaces));
+                try
+                {
+                    tokenDefList.Add(new Solnet.Extensions.TokenMint.TokenDef(t.Mint, t.Name, t.Symbol, t.DecimalPlaces));
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
             }
             var list =  BaseService.GetWalletTokenBalance(wallet, tokenDefList);
             return list;

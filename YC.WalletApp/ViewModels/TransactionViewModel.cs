@@ -1,5 +1,4 @@
-﻿// TransactionViewModel.cs
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;

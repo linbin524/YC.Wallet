@@ -31,6 +31,9 @@ using ImTools;
 using YC.WalletApp.Domain.Service;
 using System.Runtime.ConstrainedExecution;
 using YC.WalletApp.ViewModels;
+using YC.ApplicationService.Service;
+using YC.Model;
+using Solnet.Extensions;
 
 
 
@@ -48,10 +51,11 @@ namespace YC.WalletApp
                        .UseConnectionString(DataType.Sqlite, connectionString)
                        .UseAutoSyncStructure(true) // 自动同步实体结构
                        .Build();
+            MappingInit();
             SQLiteUtils.SqliteInit();
             ConfigInit();
             LanguageInit();
-            MappingInit();
+            
             if (DefaultConfig.AppConfig.ScheduleServiceIsEnabeld) {
                 Container.Resolve<UpdateWalletService>().TimeWorkInit();///定时服务启动
             }
@@ -149,11 +153,26 @@ namespace YC.WalletApp
                 var list = GetEntity<List<TokenDefEntity>>(tokenDefPath, "TokenDefs");
                 DefaultConfig.TestExpansionTokenDefs = list;
             }
+           var _userService= Container.Resolve<IUserService>();
+            _userService.InitDefalutLoginUser(new SysUser() { Account = "admin123", Password = "123456", Name = "admin123" });
 
-           var tokenDefAll= SQLiteUtils._freesql.Select<TokenDefEntity>().Count();
+
+            var tokenDefAll = SQLiteUtils._freesql.Select<TokenDefEntity>().Count();
             if (tokenDefAll < 1) {
                var vm=Container.Resolve<TokenDefViewModel>();
-                vm.InitializeTokenDef();
+                var wellKnownTokens = WellKnownTokens.All();//加载所有链上已知代币
+              
+                var detailObj = wellKnownTokens.Adapt<List<TokenDefEntity>>();
+                if (DefaultConfig.AppConfig.IsDebug)
+                {//开发模式下加载对应的测试TokenDef
+                    detailObj.AddRange(DefaultConfig.TestExpansionTokenDefs);
+                }
+
+                detailObj.ForEach(x => {
+                    x.CreationTime = DateTime.Now;
+                    //x.CreatorUserId = DefaultConfig.CurrentLoginUser.Id;
+                });
+                var inserRes = SQLiteUtils._freesql.Insert<TokenDefEntity>(detailObj).ExecuteAffrows();
             }
 
 
