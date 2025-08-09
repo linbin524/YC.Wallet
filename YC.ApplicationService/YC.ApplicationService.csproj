@@ -23,6 +23,44 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Solnet.Extensions">
+      <HintPath>..\Sdk\YC.Solana\Solnet-dll\Solnet.Extensions.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.KeyStore">
+      <HintPath>..\Sdk\YC.Solana\Solnet-dll\Solnet.KeyStore.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Metaplex">
+      <HintPath>..\Sdk\YC.Solana\Solnet-dll\Solnet.Metaplex.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Programs">
+      <HintPath>..\Sdk\YC.Solana\Solnet-dll\Solnet.Programs.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Rpc">
+      <HintPath>..\Sdk\YC.Solana\Solnet-dll\Solnet.Rpc.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Serum">
+      <HintPath>..\Sdk\YC.Solana\Solnet-dll\Solnet.Serum.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Wallet">
+      <HintPath>..\Sdk\YC.Solana\Solnet-dll\Solnet.Wallet.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="DefaultConfigure\tokendefExtension.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

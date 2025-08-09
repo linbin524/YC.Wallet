@@ -1,7 +1,7 @@
 ﻿using MySqlX.XDevAPI.Common;
 using Org.BouncyCastle.Crypto.Agreement.Srp;
 using Org.BouncyCastle.Utilities;
-using Solnet.Examples;
+
 using Solnet.Programs;
 using Solnet.Programs.Models.TokenProgram;
 using Solnet.Rpc;

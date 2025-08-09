@@ -1,6 +1,6 @@
 ﻿using Org.BouncyCastle.Crypto.Agreement.Srp;
 using SharpCompress.Common;
-using Solnet.Examples;
+
 using Solnet.Extensions;
 using Solnet.Extensions.TokenMint;
 using Solnet.KeyStore;
@@ -193,7 +193,7 @@ namespace SolanaTest
                 }
                 /*
                                 RequestResult<ResponseValue<SimulationLogs>> txSim = await _rpcClient.SimulateTransactionAsync(tx);
-                                string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+                                string logs = string.Join("\n", txSim.Result.Value.Logs);
                                 Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
                                 RequestResult<string> txReq = await _rpcClient.SendTransactionAsync(tx);

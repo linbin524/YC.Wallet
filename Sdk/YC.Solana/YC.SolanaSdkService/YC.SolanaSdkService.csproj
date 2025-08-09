@@ -11,7 +11,6 @@
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
-	  <PackageReference Include="Solnet.Serum" Version="6.0.13" />
 	  <PackageReference Include="System.Text.Json" Version="9.0.0" />
 	  <PackageReference Include="xunit" Version="2.5.3" />
 	  <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
@@ -20,12 +19,44 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\BasicLayer(net)\YC.Common\YC.Common.csproj" />
     <ProjectReference Include="..\..\..\YC.Model\YC.Model.csproj" />
-    <ProjectReference Include="..\Solnet-master\src\Solnet.Extensions\Solnet.Extensions.csproj" />
-    <ProjectReference Include="..\Solnet-master\src\Solnet.KeyStore\Solnet.KeyStore.csproj" />
-    <ProjectReference Include="..\Solnet-master\src\Solnet.Programs\Solnet.Programs.csproj" />
-    <ProjectReference Include="..\Solnet-master\src\Solnet.Rpc\Solnet.Rpc.csproj" />
-    <ProjectReference Include="..\Solnet-master\src\Solnet.Wallet\Solnet.Wallet.csproj" />
-    <ProjectReference Include="..\Solnet.Metaplex-master\Solnet.Metaplex\Solnet.Metaplex.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Solnet.Extensions">
+      <HintPath>..\Solnet-dll\Solnet.Extensions.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.KeyStore">
+      <HintPath>..\Solnet-dll\Solnet.KeyStore.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Metaplex">
+      <HintPath>..\Solnet-dll\Solnet.Metaplex.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Programs">
+      <HintPath>..\Solnet-dll\Solnet.Programs.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Rpc">
+      <HintPath>..\Solnet-dll\Solnet.Rpc.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Serum">
+      <HintPath>..\Solnet-dll\Solnet.Serum.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
+    <Reference Include="Solnet.Wallet">
+      <HintPath>..\Solnet-dll\Solnet.Wallet.dll</HintPath>
+      <Private>true</Private>
+      <CopyLocal>true</CopyLocal>
+    </Reference>
   </ItemGroup>
 
 </Project>
