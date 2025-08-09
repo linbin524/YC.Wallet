@@ -30,6 +30,7 @@ using YC.ApplicationService.IService;
 using ImTools;
 using YC.WalletApp.Domain.Service;
 using System.Runtime.ConstrainedExecution;
+using YC.WalletApp.ViewModels;
 
 
 
@@ -148,6 +149,13 @@ namespace YC.WalletApp
                 var list = GetEntity<List<TokenDefEntity>>(tokenDefPath, "TokenDefs");
                 DefaultConfig.TestExpansionTokenDefs = list;
             }
+
+           var tokenDefAll= SQLiteUtils._freesql.Select<TokenDefEntity>().Count();
+            if (tokenDefAll < 1) {
+               var vm=Container.Resolve<TokenDefViewModel>();
+                vm.InitializeTokenDef();
+            }
+
 
         }
 
@@ -280,7 +288,7 @@ namespace YC.WalletApp
                 TypeAdapterConfig<TokenDefEntity, YC.WalletApp.ViewModels.TokenDef>.NewConfig()
                     //.Map(dest => dest.Mint, src => src.Mint)  // 自定义映射 A→B
                     .IgnoreNullValues(true);            // 可选：忽略空值
-                TypeAdapterConfig<TokenDef, TokenDefEntity>.NewConfig()
+                TypeAdapterConfig<Solnet.Extensions.TokenMint.TokenDef, TokenDefEntity>.NewConfig()
                     .Map(dest => dest.Mint, src => src.TokenMint)  // 自定义映射 A→B
                     .Map(dest => dest.Name, src => src.TokenName)  // 自定义映射 A→B
                     .IgnoreNullValues(true);            // 可选：忽略空值

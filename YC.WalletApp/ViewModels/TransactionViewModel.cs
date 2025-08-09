@@ -537,11 +537,14 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
                     Amount = Amount,
                     NetWork = DefaultConfig.LocalWalletNetwork.ToString(),
                     Receiver = ReceiverAddress.ToString(),
-                    TokenDef = SQLiteUtils._freesql.Select<TokenDefEntity>()
-                        .Where(x => x.Mint == SelectedWalletAccount.TokenMint).First(),
+                    
                     WalletAccount = SelectedWalletAccount,
                     WalletId = SelectedWallet.Id
                 };
+                if (obj.TansType ==1) {
+                    obj.TokenDef = SQLiteUtils._freesql.Select<TokenDefEntity>()
+                         .Where(x => x.Mint == SelectedWalletAccount.TokenMint).First();
+                }
                 return await service.SendTransactionAsync(obj);
             });
 

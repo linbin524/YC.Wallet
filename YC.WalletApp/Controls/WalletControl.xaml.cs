@@ -83,6 +83,8 @@ namespace YC.WalletApp.Controls
             _eventSendExtension.MessageToSend=DefaultConfig.LocalWalletNetwork.ToString();
             _eventSendExtension.SendMessage();
             var vm =this.DataContext as WalletManageViewModel;
+            vm.InitWalletData();
+
             // 确保设计时可见性（可选）
             //if (DesignerProperties.GetIsInDesignMode(this))
                 MaskLayer.Visibility = Visibility.Hidden;
