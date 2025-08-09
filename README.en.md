@@ -7,6 +7,35 @@
 
 > The first enterprise-grade Solana desktop wallet built for C# developers, featuring multi-language support, Google OAuth login, SPL token management, and enterprise-level security.
 
+## 📖 Documentation
+
+- [中文文档 / Chinese Documentation](README.md)
+- [中文用户手册 / Chinese User Manual](document/用户使用说明书.md)
+- [English User Manual](document/User-Manual-EN.md)
+
+## 📸 Interface Preview
+
+### Login & Registration
+<div align="center">
+<img src="Images/Login.png" alt="Login Interface" width="400"/>
+<img src="Images/Register.png" alt="Registration Interface" width="400"/>
+</div>
+
+### Wallet Management
+<div align="center">
+<img src="Images/WalletManage.png" alt="Wallet Management" width="800"/>
+</div>
+
+### Token Management
+<div align="center">
+<img src="Images/TokenDefManage.png" alt="Token Management" width="800"/>
+</div>
+
+### Transaction Management
+<div align="center">
+<img src="Images/TransferManage.png" alt="Transaction Management" width="800"/>
+</div>
+
 ## 🌟 Project Highlights
 
 ### 🚀 Technical Advantages
@@ -92,7 +121,7 @@
 1. **Download and Install**
    ```bash
    # Download the latest version from Release page
-   https://github.com/your-username/YC.Wallet/releases
+   https://github.com/linbin524/YC.Wallet/releases
    ```
 
 2. **First Run**
@@ -139,7 +168,7 @@ YC.Wallet/
 
 1. **Clone Project**
    ```bash
-   git clone https://github.com/your-username/YC.Wallet.git
+   git clone https://github.com/linbin524/YC.Wallet.git
    cd YC.Wallet
    ```
 
@@ -216,8 +245,8 @@ This project is private and all rights reserved.
 
 ## 📞 Contact Us
 
-- **Project URL**: https://github.com/your-username/YC.Wallet
-- **Issue Feedback**: https://github.com/your-username/YC.Wallet/issues
+- **Project URL**: https://github.com/linbin524/YC.Wallet
+- **Issue Feedback**: https://github.com/linbin524/YC.Wallet/issues
 - **Email Contact**: contact@ycwallet.com
 - **Discord**: your-discord-username
 - **Twitter**: @YCWallet

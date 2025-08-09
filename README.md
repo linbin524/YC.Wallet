@@ -7,6 +7,29 @@
 
 > 首个企业级Solana桌面钱包，专为C#开发者打造，支持多语言、Google OAuth登录、SPL代币管理等企业级功能。
 
+## 📸 界面预览
+
+### 登录与注册
+<div align="center">
+<img src="Images/Login.png" alt="登录界面" width="400"/>
+<img src="Images/Register.png" alt="注册界面" width="400"/>
+</div>
+
+### 钱包管理
+<div align="center">
+<img src="Images/WalletManage.png" alt="钱包管理" width="800"/>
+</div>
+
+### 代币管理
+<div align="center">
+<img src="Images/TokenDefManage.png" alt="代币管理" width="800"/>
+</div>
+
+### 交易管理
+<div align="center">
+<img src="Images/TransferManage.png" alt="交易管理" width="800"/>
+</div>
+
 ## 🌟 项目特色
 
 ### 🚀 技术优势
@@ -92,7 +115,7 @@
 1. **下载安装**
    ```bash
    # 从Release页面下载最新版本
-   https://github.com/your-username/YC.Wallet/releases
+   https://github.com/linbin524/YC.Wallet/releases
    ```
 
 2. **首次运行**
@@ -139,7 +162,7 @@ YC.Wallet/
 
 1. **克隆项目**
    ```bash
-   git clone https://github.com/your-username/YC.Wallet.git
+   git clone https://github.com/linbin524/YC.Wallet.git
    cd YC.Wallet
    ```
 
@@ -216,8 +239,8 @@ YC.Wallet/
 
 ## 📞 联系我们
 
-- **项目地址**: https://github.com/your-username/YC.Wallet
-- **问题反馈**: https://github.com/your-username/YC.Wallet/issues
+- **项目地址**: https://github.com/linbin524/YC.Wallet
+- **问题反馈**: https://github.com/linbin524/YC.Wallet/issues
 - **邮箱联系**: contact@ycwallet.com
 - **Discord**: your-discord-username
 - **Twitter**: @YCWallet

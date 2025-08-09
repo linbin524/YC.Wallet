@@ -39,7 +39,7 @@
 ## 📥 Download & Installation
 
 ### Step 1: Download the Program
-1. Visit the project release page: `https://github.com/your-username/YC.Wallet/releases`
+1. Visit the project release page: `https://github.com/linbin524/YC.Wallet/releases`
 2. Find the latest version (usually marked as "Latest")
 3. Download the corresponding installation package:
    - `YC.Wallet-Setup.exe` - Windows installer (recommended)
@@ -94,6 +94,17 @@ Click "OK" to continue after selection.
 
 ## 👤 User Registration & Login
 
+### Interface Preview
+<div align="center">
+<img src="../Images/Login.png" alt="Login Interface" width="600"/>
+<p><em>Login Interface</em></p>
+</div>
+
+<div align="center">
+<img src="../Images/Register.png" alt="Registration Interface" width="600"/>
+<p><em>Registration Interface</em></p>
+</div>
+
 ### Register New Account
 
 #### Step 1: Enter Registration Page
@@ -138,6 +149,12 @@ Click "OK" to continue after selection.
 ---
 
 ## 🔐 Wallet Management
+
+### Interface Preview
+<div align="center">
+<img src="../Images/WalletManage.png" alt="Wallet Management Interface" width="800"/>
+<p><em>Wallet Management Interface</em></p>
+</div>
 
 ### Create New Wallet
 
@@ -201,6 +218,12 @@ Click "OK" to continue after selection.
 
 ## 🪙 Token Management
 
+### Interface Preview
+<div align="center">
+<img src="../Images/TokenDefManage.png" alt="Token Management Interface" width="800"/>
+<p><em>Token Management Interface</em></p>
+</div>
+
 ### View Token Balance
 
 #### Step 1: Select Wallet
@@ -244,6 +267,12 @@ Click "OK" to continue after selection.
 ---
 
 ## 💰 Transaction Operations
+
+### Interface Preview
+<div align="center">
+<img src="../Images/TransferManage.png" alt="Transaction Management Interface" width="800"/>
+<p><em>Transaction Management Interface</em></p>
+</div>
 
 ### Send Tokens
 
@@ -465,8 +494,8 @@ A:
 ## 📞 Technical Support
 
 ### Get Help
-- **Official Documentation**: https://docs.ycwallet.com
-- **GitHub Issues**: https://github.com/your-username/YC.Wallet/issues
+- **Official Documentation**: https://github.com/linbin524/YC.Wallet
+- **GitHub Issues**: https://github.com/linbin524/YC.Wallet/issues
 - **Email Support**: support@ycwallet.com
 - **Discord Community**: your-discord-server
 
