@@ -71,12 +71,20 @@ namespace YC.ApplicationService.Service
 
                 if (user != null)
                 {
+                    if (string.IsNullOrWhiteSpace(user.Name)) {
+                        user.Name = sysUser.Name; // 更新用户名称
+                        int count = SQLiteUtils._freesql.Update<SysUser>()
+                            .Set(x => x.Name, user.Name)
+                            .Where(x => x.Id == user.Id)
+                            .ExecuteAffrows();
+                    }
                     return res.Ok(user);
                 }
                 else
                 {
                     id = SQLiteUtils._freesql.Insert<SysUser>(sysUser).ExecuteIdentity();
-                    return res.Ok(user);
+                    sysUser.Id = id; // 设置新插入的ID
+                    return res.Ok(sysUser); // 返回新插入的用户
                 }
 
             }

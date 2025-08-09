@@ -53,7 +53,7 @@ namespace YC.WalletApp.Views
             _googleOAuthService= _container.Resolve<GoogleOAuthExtension>();    
             txtEmail.Text = "admin123";
             txtPassword.Password = "123456";
-            _userService.InitDefalutLoginUser(new SysUser() { Account= txtEmail.Text, Password= txtPassword.Password });
+            _userService.InitDefalutLoginUser(new SysUser() { Account= txtEmail.Text, Password= txtPassword.Password, Name= txtEmail.Text });
 
             _dataContext = container.Resolve<LoginViewModel>();
             this.DataContext = _dataContext;
