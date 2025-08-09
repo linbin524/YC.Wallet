@@ -12,7 +12,7 @@
 - [中文文档 / Chinese Documentation](README.cn.md)
 - [中文用户手册 / Chinese User Manual](document/用户使用说明书.md)
 - [English User Manual](document/User-Manual-EN.md)
-
+- [youtube](https://www.youtube.com/watch?v=js8nmaekmmQ)
 ## 📸 Interface Preview
 
 ### Login & Registration
