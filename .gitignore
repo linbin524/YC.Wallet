@@ -1,0 +1,12 @@
+/YC.WalletApp/.vs
+/YC.WalletApp/bin
+/YC.WalletApp/obj
+obj
+bin
+/.vs
+/Sdk/YC.Solana/Solnet-6.1.0
+/Sdk/YC.Solana/Solnet-master
+/Sdk/YC.Solana/Solnet.Metaplex-master
+/typescriptTest/node_modules
+/.vscode/launch.json
+/.vscode/tasks.json

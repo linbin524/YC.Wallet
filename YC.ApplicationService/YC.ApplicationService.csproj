@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FreeSql" Version="3.2.825" />
+    <PackageReference Include="FreeSql.DbContext" Version="3.2.825" />
+    <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.2.825" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Mapster.JsonNet" Version="1.1.1" />
+    <PackageReference Include="System.Management" Version="7.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BasicLayer(net)\YC.Common\YC.Common.csproj" />
+    <ProjectReference Include="..\Sdk\YC.Solana\YC.SolanaSdkService\YC.SolanaSdkService.csproj" />
+    <ProjectReference Include="..\YC.Model\YC.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DefaultConfigure\tokendefExtension.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

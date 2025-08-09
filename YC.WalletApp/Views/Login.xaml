@@ -1,0 +1,316 @@
+﻿<Window x:Class="YC.WalletApp.Views.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:materialDesignConverters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
+        xmlns:local="clr-namespace:YC.WalletApp"
+        xmlns:localExtension="clr-namespace:YC.WalletApp.Extension"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+         xmlns:localViewModels="clr-namespace:YC.WalletApp.ViewModels"
+        xmlns:materialDesign1="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:models="clr-namespace:YC.ApplicationService;assembly=YC.ApplicationService"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent"
+        Title="Login" Height="450" Width="800">
+    <Window.Resources>
+        <localExtension:LanguageManager x:Key="LangManager"/>
+        <Style x:Key="titleText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="36" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="#ffffff" />
+        </Style>
+
+        <Style x:Key="normalText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="LineHeight" Value="28" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="#ffffff" />
+        </Style>
+
+        <Style x:Key="button" TargetType="Button">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Width" Value="170" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#fdfefe" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="25" BorderThickness="1" BorderBrush="White" Padding="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#e8e8e8" />
+                    <Setter Property="Foreground" Value="DimGray" />
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="True">
+                    <Setter Property="Background" Value="#d9d9d9" />
+                    <Setter Property="Foreground" Value="DimGray" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="buttonCircle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Margin" Value="8 0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="30" BorderThickness="1"
+                                BorderBrush="#878787" Padding="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#d9d9d9" />
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="True">
+                    <Setter Property="Background" Value="#c4c4c4" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="textHint" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Panel.ZIndex" Value="1" />
+            <Setter Property="Margin" Value="10 0 0 0" />
+            <Setter Property="Foreground" Value="#acb0af" />
+        </Style>
+
+        <Style x:Key="textBox" TargetType="Control">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Margin" Value="10 0 0 0" />
+            <Setter Property="Foreground" Value="#878787" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+
+        <Style x:Key="mainButton" TargetType="Button">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Margin" Value="0 20 0 0" />
+            <Setter Property="Background" Value="#3AB19B" />
+            <Setter Property="Foreground" Value="#FDFEFE" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="25" BorderThickness="1"
+                                BorderBrush="#49B7A3" Padding="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#339685" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="True">
+                    <Setter Property="Background" Value="#2d7a6c" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="imgClose" TargetType="Image">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Margin" Value="0 13 13 0" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CircleDropDownButton"
+       BasedOn="{StaticResource {x:Type mah:DropDownButton}}"
+       TargetType="mah:DropDownButton">
+            <Setter Property="ArrowVisibility" Value="Collapsed" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="ButtonStyle" Value="{DynamicResource MahApps.Styles.Button.Circle}" />
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource MahApps.Styles.Button.FocusVisualStyle.Circle}" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
+        </Style>
+
+        <DataTemplate x:Key="PopupContent">
+            <StackPanel Margin="8 5" Orientation="Horizontal"  HorizontalAlignment="Center"
+ MinWidth="108">
+                <Image Source="{Binding Logo}" Width="15" Height="20" Margin="5 -2"/>
+                <TextBlock Text="{Binding Name}"  HorizontalAlignment="Center"/>
+            </StackPanel>
+        </DataTemplate>
+        <ControlTemplate x:Key="ValidationErrorTemplate">
+            <DockPanel LastChildFill="True">
+                <TextBlock Foreground="Red" FontSize="14" FontWeight="Bold" Margin="2,0,5,0">
+                        !
+                </TextBlock>
+                <AdornedElementPlaceholder x:Name="AdornedElement"/>
+                <TextBlock Foreground="Red" Text="{Binding ElementName=AdornedElement, Path=(Validation.Errors)[0].ErrorContent}" Margin="5,0,0,0"/>
+            </DockPanel>
+        </ControlTemplate>
+    </Window.Resources>
+    <Window.DataContext>
+        <localViewModels:LoginViewModel/>
+    </Window.DataContext>
+    <materialDesign:DialogHost DialogTheme="Inherit"
+     Identifier="SecondDialog" 
+     SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}" >
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.5*" />
+            </Grid.ColumnDefinitions>
+
+            <Image Source="../Assets/Images/Login/close.png" Grid.Column="1"
+               Panel.ZIndex="1" MouseUp="close_MouseUp" Style="{StaticResource imgClose}" />
+
+            <Border CornerRadius="10 0 0 10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0, 0" EndPoint="1, 1">
+                        <GradientStop Color="#3AA9AD" Offset="0" />
+                        <GradientStop Color="#3AADA1" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Grid>
+                    <Canvas>
+                        <Polygon Points="0, 20 230,140 0,270" Fill="#4EB1B6" />
+                        <Polygon Points="100, 400 200,370 180,470" Fill="#4EB1B6" />
+                        <Ellipse Margin="250 450 0 0" Width="40" Height="40" Fill="#4EB1B6" />
+                        <Ellipse Margin="50 400 0 0" Width="20" Height="20" Fill="#4EB1B6" />
+                    </Canvas>
+
+                    <StackPanel VerticalAlignment="Center">
+
+                        <TextBlock Text="{Binding [Register], Source={x:Static localExtension:LanguageManager.Instance}}" Style="{StaticResource titleText}" />
+                        <TextBlock Text="{Binding [RegisterInfo], Source={x:Static localExtension:LanguageManager.Instance}}" Style="{StaticResource normalText}" Opacity="0.8" Margin="10 10" />
+                        <Button Content="{Binding [Register], Source={x:Static localExtension:LanguageManager.Instance}}" Style="{StaticResource button}" Click="Register_Click" />
+                        <materialDesign:SplitButton VerticalAlignment="Bottom" x:Name="sbtn_1"
+                      Content="{Binding CurrentLanguage.Name, FallbackValue=请选择语言}"
+                      Style="{StaticResource MaterialDesignRaisedLightSplitButton}"
+                      HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                      MinWidth="170" Command="{Binding GenreDropDownMenuItemCommand}" Height="30" Margin="10,5,10,-5">
+                            <materialDesign:SplitButton.PopupContent>
+                                <ListBox ItemsSource="{Binding Source={x:Static models:DefaultConfig.SupportedLanguages }}"
+                SelectedItem="{Binding CurrentLanguage}" SelectionChanged="lb_changeLanguage_SelectionChanged"
+                ItemTemplate="{StaticResource PopupContent}" />
+                            </materialDesign:SplitButton.PopupContent>
+                        </materialDesign:SplitButton>
+                        <!--<ComboBox x:Name="cbb_changeLanguage" StaysOpenOnEdit="True" VerticalAlignment="Top" 
+                      SelectionChanged="cbb_changeLanguage_SelectionChanged" 
+                      Height="30" Margin="20,10" DisplayMemberPath="Name"  HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                  MinWidth="170">
+                    </ComboBox>-->
+                        <!--<TextBlock Text="{Binding Source={x:Static models:DefaultConfig.LocalLanguage}  }"></TextBlock>-->
+                        <!--<TextBlock Text="{Binding Source={x:Static models:DefaultConfig.LocalLanguage}  }"></TextBlock>-->
+                        <!--<TextBlock Text="{Binding ElementName=cbb_changeLanguage, Path=SelectedItem.Name  }"></TextBlock>-->
+
+                        <!--<mah:DropDownButton Margin="5"
+                     Content="选择多语言"
+                     DisplayMemberPath="Name"
+                     HorizontalAlignment="center"
+                    HorizontalContentAlignment="center"
+                    ItemsSource="{Binding Source={x:Static models:DefaultConfig.SupportedLanguages }}">
+                        
+                        -->
+                        <!--<mah:DropDownButton.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+                                <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource FindAncestor, 
+                                    AncestorType={x:Type mah:DropDownButton}}, Path=DataContext.GenreDropDownMenuItemCommand}"  />
+                                <Setter Property="CommandParameter" Value="{Binding Name}" />
+                            </Style>
+                        </mah:DropDownButton.ItemContainerStyle>-->
+                        <!--
+                        <mah:DropDownButton.Icon>
+                            <iconPacks:PackIconMaterial Margin="5" Kind="BookMusic" />
+                        </mah:DropDownButton.Icon>
+                    </mah:DropDownButton>-->
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Background="#ffffff" Grid.Column="1" CornerRadius="0 10 10 0" MouseDown="Border_MouseDown">
+                <StackPanel>
+                    <TextBlock Text="{Binding [Wallet Login], Source={x:Static localExtension:LanguageManager.Instance}}" Margin="0 10 0 0" Style="{StaticResource titleText}" Foreground="#3AB19B" />
+                    <StackPanel Orientation="Horizontal" Margin="0 10" HorizontalAlignment="Center">
+                        <!--<Button Style="{StaticResource buttonCircle}">
+                        <Image Source="../Assets/Images/Login/wechat.png" Width="20"
+                               Height="20" />
+                    </Button>-->
+                        <Button Style="{StaticResource buttonCircle}" Click="GoogleOAuthLogin_Click">
+                            <Image Source="../Assets/Images/Login/google.png" Width="20"
+                               Height="20" />
+                        </Button>
+                        <!--<Button Style="{StaticResource buttonCircle}">
+                        <Image Source="../Assets/Images/Login/github.png" Width="20"
+                               Height="20" />
+                    </Button>-->
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding [Or login in using email], Source={x:Static localExtension:LanguageManager.Instance}}" Style="{StaticResource normalText}" Foreground="#878787" Margin="0 10 0 15" />
+
+                    <Border Padding="10" BorderThickness="1" BorderBrush="#acb0af" Margin="70 7" CornerRadius="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Image Source="../Assets/Images/Login/email.png" Height="20" />
+                            <TextBlock x:Name="textEmail" MouseDown="textEmail_MouseDown" Text="{Binding [Email/Account], Source={x:Static localExtension:LanguageManager.Instance}}"
+                                   Style="{StaticResource textHint}"  />
+                            <TextBox x:Name="txtEmail" TextChanged="txtEmail_TextChanged" 
+                                 Style="{StaticResource textBox}" />
+                        </Grid>
+                    </Border>
+
+                    <Border Padding="10" BorderThickness="1" BorderBrush="#acb0af" Margin="70 7" CornerRadius="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Image Source="../Assets/Images/Login/lock.png" Height="20" />
+                            <TextBlock x:Name="textPassword" MouseDown="textPassword_MouseDown" Text="{Binding [Password], Source={x:Static localExtension:LanguageManager.Instance}}"
+                                   Style="{StaticResource textHint}" />
+                            <PasswordBox x:Name="txtPassword" PasswordChanged="txtPassword_TextChanged"
+                                     Style="{StaticResource textBox}"  />
+                        </Grid>
+                    </Border>
+
+                    <Button Content="{Binding [Login], Source={x:Static localExtension:LanguageManager.Instance}}" Click="login_Click" Style="{StaticResource mainButton}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </materialDesign:DialogHost>
+</Window>

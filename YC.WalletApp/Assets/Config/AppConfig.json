@@ -1,0 +1,16 @@
+{
+  "IsDebug": true,
+  ///定时服务是否按照交易记录验证执行
+  "ScheduleToTransRecordExecute": false,
+  ///是否进行定时服务
+  "ScheduleServiceIsEnabeld": false,
+  //首次执行延迟（秒，默认0-立即执行）
+  "ScheduleInitialDelay": 360,
+  //正常执行间隔（秒，必须大于0）
+  "ScheduleNormalInterval": 360,
+  //重试间隔策略（秒，默认[30,60,180,600,1800]）
+  "ScheduleRetryIntervals": [ 60, 300, 1000 ],
+  //最大重试次数（默认3次）
+  "ScheduleMaxRetries": 3,
+
+}

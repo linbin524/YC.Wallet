@@ -1,0 +1,358 @@
+<UserControl x:Class="YC.WalletApp.Controls.TokenDefControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:YC.WalletApp.Extension"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:RowIndexConverter x:Key="RowIndexConverter" x:Shared="False"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <FrameworkElement x:Name="DataContextProxy" DataContext="{Binding}" />
+        <!-- 顶部操作栏 -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
+            <Button Content="{Binding [Add TokenDef], Source={x:Static local:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignRaisedSecondaryButton}" Command="{Binding AddTokenDefCommand}" Margin="10" />
+            <Button Content="{Binding [Edit TokenDef], Source={x:Static local:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignRaisedSecondaryButton}" Command="{Binding EditTokenDefCommand}" IsEnabled="{Binding CanEdit}" Margin="10" />
+            <Button Content="{Binding [Delete TokenDef], Source={x:Static local:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignRaisedSecondaryButton}" Command="{Binding DeleteTokenDefCommand}"  Margin="10" />
+            <Button Content="{Binding [Initialization TokenDef], Source={x:Static local:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignRaisedSecondaryButton}"  Click="InitializeTokenDef_Click"  Margin="10"/>
+           
+        </StackPanel>
+
+        <!-- 中间列表展示区 -->
+        <DataGrid Grid.Row="1" Margin="10" ItemsSource="{Binding TokenDefs}" SelectionMode="Single"   AutoGenerateColumns="False"  Width="Auto"  EnableRowVirtualization="False" 
+          EnableColumnVirtualization="False" IsReadOnly="True"
+            x:Name="TokenDefDataGrid">
+            <DataGrid.Resources>
+                <!-- 统一列标题样式：加粗 + 居中 + 消除缩进 -->
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0"/>
+                    <!-- 修复模板布局 -->
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                                <Grid>
+                                    <ContentPresenter 
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="Center"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                
+                <!-- 自定义行样式来覆盖默认选择背景色 -->
+                <Style TargetType="{x:Type DataGridRow}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+            <!-- 添加行号样式 -->
+            <DataGrid.RowHeaderStyle>
+                <Style TargetType="DataGridRowHeader">
+                    <!-- 禁用交互功能 -->
+                    <Setter Property="IsHitTestVisible" Value="False"/>
+                    <!-- 隐藏默认行头的布局 -->
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridRowHeader">
+                                <!-- 行号容器 -->
+                                <Border 
+                            Background="Transparent"
+                            Margin="4 0">
+                                    <!-- 行号文本 -->
+                                    <TextBlock
+                                Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={x:Static local:RowIndexConverter.Instance}}"
+                                FontSize="13"
+                                FontFamily="Segoe UI"
+                                Foreground="#666666"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Padding="8 4">
+                                <!-- 轻量投影（可选） -->
+                                        <TextBlock.Effect>
+                                            <DropShadowEffect Opacity="0.1" BlurRadius="2" ShadowDepth="0"/>
+                                        </TextBlock.Effect>
+                                
+                                <!-- 动态交互效果 -->
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <!-- 默认状态 -->
+                                                <Setter Property="Foreground" Value="#666666"/>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <!-- 固定行头宽度 -->
+                    <Setter Property="Width" Value="36"/>
+                </Style>
+            </DataGrid.RowHeaderStyle>
+            <DataGrid.Columns>
+                <!-- 全选复选框列 -->
+                <DataGridCheckBoxColumn MaxWidth="100" Binding="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <!-- 自定义标题模板 - 全选复选框 -->
+                    <DataGridCheckBoxColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <CheckBox 
+                                x:Name="SelectAllCheckBox"
+                                IsThreeState="False"
+                                IsChecked="{Binding DataContext.IsAllItemsSelected, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ToolTip="{Binding [CheckAll], Source={x:Static local:LanguageManager.Instance}}" />
+                        </DataTemplate>
+                    </DataGridCheckBoxColumn.HeaderTemplate>
+                    <!-- 内容居中 -->
+                    <DataGridCheckBoxColumn.ElementStyle>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridCheckBoxColumn.ElementStyle>
+                    <!-- 编辑模式居中 -->
+                    <DataGridCheckBoxColumn.EditingElementStyle>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridCheckBoxColumn.EditingElementStyle>
+                </DataGridCheckBoxColumn>
+               
+                <!-- 文本列（内容居中） -->
+                <DataGridTextColumn  Header="{Binding [Mint], Source={x:Static local:LanguageManager.Instance}}" Binding="{Binding Mint}" Width="auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn  Header="{Binding [Token Name], Source={x:Static local:LanguageManager.Instance}}" Binding="{Binding Name}" Width="2*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="{Binding [Token Symbol], Source={x:Static local:LanguageManager.Instance}}" Binding="{Binding Symbol}" Width="2*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="{Binding [Token DecimalPlaces], Source={x:Static local:LanguageManager.Instance}}" Binding="{Binding DecimalPlaces}" Width="2*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+              
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- 底部分页导航栏 -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="10" HorizontalAlignment="Center">
+            <Button Content="{Binding [GoPrevious], Source={x:Static local:LanguageManager.Instance}}" x:Name="btn_GoPrevious" Click="CanGoPrevious_Click" IsEnabled="True" Margin="5"/>
+            <Button Content="{Binding [GoNextPage], Source={x:Static local:LanguageManager.Instance}}" x:Name="btn_GoNext" Click="CanGoNextPage_Click" IsEnabled="{Binding CanGoNext}" Margin="5"/>
+            <Button Content="{Binding [GoLastPage], Source={x:Static local:LanguageManager.Instance}}" x:Name="btn_GoLastPage" Click="CanGoLastPage_Click"   Margin="5"/>
+            <TextBox Width="50" Margin="5" Text="{Binding TargetPageNumber, UpdateSourceTrigger=LostFocus}"/>
+            <Button Content="{Binding [GoToPage], Source={x:Static local:LanguageManager.Instance}}"  x:Name="btn_GoToPage" Click="CanGoToPage_Click" Margin="5"/>
+            <TextBlock Margin="10" Text="{Binding TotalPagesText}"/>
+            <TextBlock Margin="10" Text="{Binding CurrentPageItemsText}"/>
+        </StackPanel>
+
+        <!-- 添加 TokenDef 对话框 -->
+        <Popup IsOpen="{Binding IsAddPopupOpen}" Placement="Center" AllowsTransparency="True">
+            <Border Background="White"  BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Padding="20" Width="400" Height="400">
+                <DockPanel>
+                    <!-- 标题 -->
+                    <TextBlock Text="{Binding [AddTokenDefTitle], Source={x:Static local:LanguageManager.Instance}}" FontSize="20" FontWeight="Bold" Margin="0,0,0,10" Foreground="#212121"
+            HorizontalAlignment="Center" DockPanel.Dock="Top"/>
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <!-- 主内容区域：自动分配剩余空间 -->
+                            <RowDefinition Height="*"/>
+                            <!-- 按钮区域：固定高度 -->
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 输入项部分：使用 Grid 精准控制行列 -->
+                        <Grid Grid.Row="0" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <!-- 标题列 -->
+                                <ColumnDefinition Width="2*"/>
+                                <!-- 文本框列 -->
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Mint -->
+                            <TextBlock Text="{Binding [MintLabel], Source={x:Static local:LanguageManager.Instance}}" Grid.Row="0" Grid.Column="0" 
+                   VerticalAlignment="Center" Margin="0,10"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" 
+                 Text="{Binding NewTokenDef.Mint}"
+                 Margin="10,10" Padding="5"/>
+
+                            <!-- Name -->
+                            <TextBlock Text="{Binding [NameLabel], Source={x:Static local:LanguageManager.Instance}}" Grid.Row="1" Grid.Column="0" 
+                   VerticalAlignment="Center" Margin="0,10"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" 
+                 Text="{Binding NewTokenDef.Name}"
+                 Margin="10,10" Padding="5"/>
+
+                            <!-- Symbol -->
+                            <TextBlock Text="{Binding [SymbolLabel], Source={x:Static local:LanguageManager.Instance}}" Grid.Row="2" Grid.Column="0" 
+                   VerticalAlignment="Center" Margin="0,10"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" 
+                 Text="{Binding NewTokenDef.Symbol}"
+                 Margin="10,10" Padding="5"/>
+
+                            <!-- Decimal Places -->
+                            <TextBlock Text="{Binding [DecimalPlacesLabel], Source={x:Static local:LanguageManager.Instance}}" Grid.Row="3" Grid.Column="0" 
+                   VerticalAlignment="Center" Margin="0,10"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" 
+                 Text="{Binding NewTokenDef.DecimalPlacesStr}"
+                 Margin="10,10" Padding="5"/>
+                        </Grid>
+
+                        <!-- 按钮部分：固定在底部右侧 -->
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" 
+                HorizontalAlignment="Right" Margin="0,20,0,0">
+                            <Button Content="{Binding [Confirm], Source={x:Static local:LanguageManager.Instance}}" Command="{Binding AddConfirmCommand}" 
+                Margin="0,0,10,0" Padding="15,5"/>
+                            <Button Content="{Binding [Cancel], Source={x:Static local:LanguageManager.Instance}}" Command="{Binding AddCancelCommand}" 
+                Padding="15,5"/>
+                        </StackPanel>
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </Popup>
+
+        <!-- 编辑 TokenDef 对话框 -->
+        <Popup IsOpen="{Binding IsEditPopupOpen}" Placement="Center" AllowsTransparency="True">
+            <Border Background="White" BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Padding="20" Width="400" Height="400">
+                <DockPanel>
+                    <!-- 标题 -->
+                    <TextBlock Text="{Binding [EditTokenDefTitle], Source={x:Static local:LanguageManager.Instance}}" 
+                      FontSize="20" 
+                      FontWeight="Bold" 
+                      Margin="0,0,0,10" 
+                      Foreground="#212121"
+                      HorizontalAlignment="Center" 
+                      DockPanel.Dock="Top"/>
+
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <!-- 主内容区域：自动分配剩余空间 -->
+                            <RowDefinition Height="*"/>
+                            <!-- 按钮区域：固定高度 -->
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 输入项部分：使用 Grid 精准控制行列 -->
+                        <Grid Grid.Row="0" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <!-- 标题列 -->
+                                <ColumnDefinition Width="2*"/>
+                                <!-- 文本框列 -->
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Mint -->
+                            <TextBlock Text="{Binding [MintLabel], Source={x:Static local:LanguageManager.Instance}}" 
+                             Grid.Row="0" Grid.Column="0" 
+                             VerticalAlignment="Center" 
+                             Margin="0,10"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" 
+                           Text="{Binding EditedTokenDef.Mint, UpdateSourceTrigger=PropertyChanged}"
+                           Margin="10,10" 
+                           Padding="5"/>
+
+                            <!-- Name -->
+                            <TextBlock Text="{Binding [NameLabel], Source={x:Static local:LanguageManager.Instance}}" 
+                             Grid.Row="1" Grid.Column="0" 
+                             VerticalAlignment="Center" 
+                             Margin="0,10"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" 
+                           Text="{Binding EditedTokenDef.Name, UpdateSourceTrigger=PropertyChanged}"
+                           Margin="10,10" 
+                           Padding="5"/>
+
+                            <!-- Symbol -->
+                            <TextBlock Text="{Binding [SymbolLabel], Source={x:Static local:LanguageManager.Instance}}" 
+                             Grid.Row="2" Grid.Column="0" 
+                             VerticalAlignment="Center" 
+                             Margin="0,10"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" 
+                           Text="{Binding EditedTokenDef.Symbol, UpdateSourceTrigger=PropertyChanged}"
+                           Margin="10,10" 
+                           Padding="5"/>
+
+                            <!-- Decimal Places -->
+                            <TextBlock Text="{Binding [DecimalPlacesLabel], Source={x:Static local:LanguageManager.Instance}}" 
+                             Grid.Row="3" Grid.Column="0" 
+                             VerticalAlignment="Center" 
+                             Margin="0,10"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" 
+                           Text="{Binding EditedTokenDef.DecimalPlacesStr, UpdateSourceTrigger=PropertyChanged}"
+                           Margin="10,10" 
+                           Padding="5"/>
+                        </Grid>
+
+                        <!-- 按钮部分：固定在底部右侧 -->
+                        <StackPanel Grid.Row="1" 
+                          Orientation="Horizontal" 
+                          HorizontalAlignment="Right" 
+                          Margin="0,20,0,0">
+                            <Button Content="{Binding [EditConfirm], Source={x:Static local:LanguageManager.Instance}}" 
+                          Command="{Binding EditConfirmCommand}" 
+                          Margin="0,0,10,0" 
+                          Padding="15,5"/>
+                            <Button Content="{Binding [EditCancel], Source={x:Static local:LanguageManager.Instance}}" 
+                          Command="{Binding EditCancelCommand}" 
+                          Padding="15,5"/>
+                        </StackPanel>
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </Popup>
+    </Grid>
+</UserControl>

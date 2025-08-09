@@ -1,0 +1,479 @@
+<UserControl x:Class="YC.WalletApp.Controls.WalletControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YC.WalletApp.Extension"
+             xmlns:vm="clr-namespace:YC.WalletApp.ViewModels"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:controls="clr-namespace:YC.WalletApp.Controls"
+             mc:Ignorable="d" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+
+        <local:SubtractConverter x:Key="SubtractConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- 遮罩层 -->
+        <Grid x:Name="MaskLayer" 
+              Visibility="Collapsed"
+              Background="#7F000000"
+              Panel.ZIndex="999"
+              IsHitTestVisible="True">
+
+            <!-- 滚动文字容器 -->
+            <Viewbox Stretch="Uniform" 
+                     Width="300" 
+                     Height="60"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center">
+                <Canvas Width="800" Height="60">
+                    <TextBlock x:Name="LoadingText" 
+                             Text="数据加载中......" 
+                             FontSize="50"
+                             Foreground="White"
+                             RenderTransformOrigin="0.5,0.5">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform x:Name="TextTransform" X="0"/>
+                        </TextBlock.RenderTransform>
+                        <TextBlock.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="TextTransform"
+                                            Storyboard.TargetProperty="X"
+                                            From="400" 
+                                            To="-400"
+                                            Duration="0:0:3"
+                                            AutoReverse="False"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </TextBlock.Triggers>
+                    </TextBlock>
+                </Canvas>
+            </Viewbox>
+        </Grid>
+
+        <!-- 顶部操作栏 -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
+          
+            <Button
+              MinWidth="90"
+              materialDesign:RippleAssist.Feedback="#DD000000"
+              IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+              Style="{StaticResource MaterialDesignRaisedSecondaryButton}"
+              ToolTip="Resource name: MaterialDesignRaisedSecondaryButton" Content="{Binding [CreateWallet], Source={x:Static local:LanguageManager.Instance}}" Margin="10"  Click="CreateWallet_Click"/>
+            <Button
+             MinWidth="90"
+              IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+              Style="{StaticResource MaterialDesignFlatMidBgButton}"
+              ToolTip="MaterialDesignFlatMidButton"  Content="{Binding [ImportWallet], Source={x:Static local:LanguageManager.Instance}}" Margin="10" Click="ImportWallet_Click" />
+            <Button
+             MinWidth="90"
+              Content="{Binding [ExportWallet], Source={x:Static local:LanguageManager.Instance}}" Margin="10" Click="ExportWallet_Click"
+              IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+              Style="{StaticResource MaterialDesignRaisedDarkButton}"
+              ToolTip="Export wallet function" />
+            <Button
+    MinWidth="150"
+    Margin="0,0,0,0"
+    Command="{Binding RunCreateDialogCommand}"
+    Content="{Binding [CreateAssociationAccount], Source={x:Static local:LanguageManager.Instance}}"  Style="{StaticResource MaterialDesignRaisedDarkButton}" />
+        </StackPanel>
+
+        <!-- 中间内容区域 -->
+        <Grid Margin="0,60,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox  Grid.Column="0" Margin="5" Header="{Binding [WalletList], Source={x:Static local:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignGroupBox}" >
+               
+                <!-- 钱包列表 -->
+                <StackPanel Margin="-9">
+                    <ListBox x:Name="WalletListBox" Margin="0" 
+         ItemsSource="{Binding WalletDtos}" 
+         SelectionChanged="WalletListBox_SelectionChanged"
+         MinHeight="600" MaxHeight="600"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                        <!-- 统一项容器样式 -->
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
+                        <!-- 统一项模板布局 -->
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch" Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 第一行：钱包名称和按钮 -->
+                                    <DockPanel Grid.Row="0" LastChildFill="True">
+                                        <Button DockPanel.Dock="Right"
+                            Width="30" Style="{StaticResource MaterialDesignIconButton}"
+                            Click="CopyButton_Click">
+                                            <materialDesign:PackIcon 
+                            Kind="ContentCopy" 
+                            Width="20"
+                            Height="20"
+                            Foreground="#666"/>
+                                        </Button>
+                                        
+                                        <Button DockPanel.Dock="Right" Width="35" Height="30" Margin="0,0,5,0" Click="RefreshButton_Click">
+                                            <materialDesign:PackIcon Kind="Refresh" />
+                                        </Button>
+                                        <TextBlock Text="{Binding WalletName}" 
+                               FontWeight="Bold"
+                               Margin="0,0,10,0"
+                               VerticalAlignment="Center"/>
+                                    </DockPanel>
+
+                                    <!-- 第二行：主账号 -->
+                                    <TextBlock Grid.Row="1" Margin="0,5,0,0">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat=" {0} : {1}">
+                                                <Binding Path="[MasterAccount]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="PublicKey"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- 第三行：余额 -->
+                                    <TextBlock Grid.Row="2" Margin="0,5,0,0">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat=" {0} : {1}">
+                                                <Binding Path="[SOLBalance]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="LamportsBalance"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- 分隔线 -->
+                                    <Separator Grid.Row="3" Margin="0,5,0,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <!-- 统一列表布局 -->
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                </StackPanel>
+            </GroupBox>
+            <!-- 钱包账户列表 -->
+            <GroupBox  Grid.Column="1" Margin="5" Header="{Binding [WalletAccountList], Source={x:Static local:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignGroupBox}">
+                <StackPanel Margin="-9">
+                    <ListBox x:Name="AccountListBox" 
+         Margin="0" 
+         ItemsSource="{Binding SelectWalletAccountDtos}"
+         SelectionChanged="AccountListBox_SelectionChanged"
+         MinHeight="600"  
+         MaxHeight="600"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                        <!-- 强制内容拉伸 -->
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
+                        <!-- 网格布局模板 -->
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="10,5" HorizontalAlignment="Stretch">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 第一行：Token信息 -->
+                                    <TextBlock Grid.Row="0" FontWeight="Bold">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat=" {0}:{1}, {2}:{3}">
+                                                <Binding Path="[TokenName]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="TokenName"/>
+                                                <Binding Path="[Symbol]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="Symbol"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- 第二行：公钥 -->
+                                    <TextBlock Grid.Row="1" FontSize="10" Foreground="Gray" Margin="0,3">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat=" {0}:{1}">
+                                                <Binding Path="[PublicKey]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="PublicKey"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- 第三行：数量 -->
+                                    <TextBlock Grid.Row="2" FontSize="12" Foreground="Gray" Margin="0,3">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat=" {0}:{1}">
+                                                <Binding Path="[QuantityDecimal]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="QuantityDecimal"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- 第四行：账户类型 -->
+                                    <TextBlock Grid.Row="3" FontSize="12" Foreground="Red" Margin="0,3">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat=" {0}:{1}">
+                                                <Binding Path="[AccountType]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="AccountType"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- 第五行：Lamports -->
+                                    <TextBlock Grid.Row="4" FontSize="12" Foreground="Gray" Margin="0,3">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat=" {0}:{1}">
+                                                <Binding Path="[DoubleTypeLamports]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                                <Binding Path="DoubleTypeLamports"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- 分割线 -->
+                                    <Separator Grid.Row="5" Margin="0,20,0,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <!-- 性能优化 -->
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                </StackPanel>
+            </GroupBox>
+            <!-- 账户详细内容展示区域 -->
+            <GroupBox Grid.Column="2" Margin="5" 
+          Header="{Binding [AccountDetails], Source={x:Static local:LanguageManager.Instance}}" 
+          Style="{StaticResource MaterialDesignGroupBox}">
+                <StackPanel Margin="-9">
+                    <Border BorderBrush="Gray" BorderThickness="1" MinHeight="600" MaxHeight="600">
+                        <StackPanel x:Name="AccountDetailsPanel" Margin="10">
+
+                            <!-- TokenName -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock FontSize="18" FontWeight="Bold" Margin="0,10" Foreground="#212121">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[TokenName]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.TokenName"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.TokenName}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2"
+                            ToolTip="{Binding [CopyToClipboard], Source={x:Static local:LanguageManager.Instance}}">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- Symbol -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock FontSize="18" FontWeight="Bold" Margin="0,10" Foreground="#212121">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[Symbol]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.Symbol"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.Symbol}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- PublicKey -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock FontSize="12" Foreground="#212121" Margin="0,10">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[PublicKey]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.PublicKey"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.PublicKey}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- AccountType -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="IsAssociatedTextBlock" FontSize="15" FontWeight="Bold" Foreground="#212121" Margin="0,10">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[AccountType]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.AccountType"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.AccountType}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- QuantityDecimal -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="TokenBalanceTextBlock" FontSize="15" Foreground="#212121" Margin="0,10">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[QuantityDecimal]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.QuantityDecimal"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.QuantityDecimal}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- DoubleTypeLamports -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="LamportsBalanceTextBlock" FontSize="12" Foreground="#212121" Margin="0,10">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[SQL Amount]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.DoubleTypeLamports"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.DoubleTypeLamports}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <Separator Margin="0,20,0,20" Background="Gray"/>
+
+                            <!-- SPLTokenInfo -->
+                            <TextBlock Text="{Binding [SPLTokenInfo], Source={x:Static local:LanguageManager.Instance}}" 
+                          FontSize="20" FontWeight="Bold" Foreground="#212121"/>
+
+                            <!-- Owner -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="OwnerTextBlock" FontSize="12" Foreground="#212121" Margin="0,10">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[Owner]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.Owner"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.Owner}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- TokenMint -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="TokenMintTextBlock" FontSize="12" Foreground="#212121" Margin="0,10">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[TokenMint]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.TokenMint"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.TokenMint}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- DecimalPlaces -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="TokenDetailsTextBlock" FontSize="15" Foreground="#212121" Margin="0,10">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat=" {0}:{1}">
+                                            <Binding Path="[DecimalPlaces]" Source="{x:Static local:LanguageManager.Instance}"/>
+                                            <Binding Path="AccountDetail.DecimalPlaces"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <Button Click="CopyAccountDetail_Click" 
+                            CommandParameter="{Binding AccountDetail.DecimalPlaces}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5,0,0,0" Padding="2">
+                                    <materialDesign:PackIcon Kind="ContentCopy" Width="20" Height="20" Foreground="#666"/>
+                                </Button>
+                            </StackPanel>
+
+                            <Separator Margin="0,20,0,20" Background="Gray"/>
+
+                            <!-- Transfer History -->
+                            <TextBlock Text="{Binding [SPLToken Transfer History], Source={x:Static local:LanguageManager.Instance}}" 
+                          FontSize="20" FontWeight="Bold" Foreground="#212121"/>
+
+                            <ListBox x:Name="TransactionListBox" BorderThickness="0" Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" FontSize="15" Foreground="#212121" Margin="0,2,0,2"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <Separator Margin="0,10,0,10" Background="Gray"/>
+
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </GroupBox>
+
+
+        </Grid>
+
+    </Grid>
+</UserControl>

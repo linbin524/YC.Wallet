@@ -1,0 +1,431 @@
+<UserControl x:Class="YC.WalletApp.Controls.TransactionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:YC.WalletApp.Extension"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d"
+             xmlns:localEx="clr-namespace:YC.WalletApp.Extension"
+             xmlns:system="clr-namespace:System;assembly=netstandard"
+             d:DesignHeight="600" d:DesignWidth="1200">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- Converters -->
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+            <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+            <local:DateTimeToRelativeStringConverter x:Key="RelativeTimeConverter"/>
+            <local:AddressShortConverter x:Key="AddressShortConverter"/>
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <!-- 转换器资源 -->
+            <local:IndexConverter x:Key="IndexConverter"/>
+            <local:StatusTextConverter x:Key="StatusTextConverter"/>
+            <local:FeeConverter x:Key="FeeConverter"/>
+            <local:BoolToYesNoConverter x:Key="BoolToYesNoConverter"/>
+            <local:NullToVisibilityConverter x:Key="NullToVisibility"/>
+            <local:BoolToDetailTextConverter x:Key="BoolToDetailText"/>
+            <local:StatusColorConverter x:Key="StatusColorConverter"/>
+            <local:StatusIconConverter x:Key="StatusIconConverter"/>
+            <local:TransactionTypeConverter x:Key="TransactionTypeConverter"/>
+            <!-- 可复制文本样式 -->
+            <Style x:Key="CopyableText" TargetType="TextBlock">
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="ToolTip" Value="{Binding [CopyToClipboard], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnCopyText"/>
+            </Style>
+            <!-- Styles -->
+            <Style TargetType="Expander" x:Key="MaterialDesignAnimatedExpander"  BasedOn="{StaticResource MaterialDesignExpander}">
+                <Setter Property="Margin" Value="0 4"/>
+            </Style>
+            <!-- 添加钱包项模板 -->
+            <DataTemplate x:Key="WalletItemTemplate">
+                <StackPanel Orientation="Horizontal" Margin="4">
+                    <materialDesign:PackIcon Kind="Wallet" 
+                                   Width="16"
+                                   Margin="0 0 8 0"/>
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Address, Converter={StaticResource AddressShortConverter}}" 
+                     FontStyle="Italic"
+                     Margin="8 0 0 0"
+                     Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                </StackPanel>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="16,5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" MinWidth="400"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="2*" MinWidth="300"/>
+        </Grid.ColumnDefinitions>
+        <!-- 左侧交易记录 -->
+        <GroupBox Margin="8" 
+             Header="{Binding [TransactionRecord], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+             Style="{StaticResource MaterialDesignGroupBox}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding TransactionRecords}" AlternationCount="100000">
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <materialDesign:Card Margin="10" 
+                                           Padding="0">
+                                <Expander IsExpanded="{Binding IsExpanded}"
+                                    Padding="8" Margin="8">
+                                    <!-- 头部布局 -->
+                                    <Expander.Header>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding SequenceNumber}"
+                                               Width="40"
+                                               HorizontalAlignment="Center"
+                                               FontWeight="Bold"/>
+
+                                            <!-- 核心信息 -->
+                                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="8,0">
+                                                <TextBlock>
+                                                <Run Text="{Binding TransferQuantity}" FontWeight="DemiBold"/>
+                                                <Run Text="{Binding TokenSymbol}" Foreground="#666"/>
+                                                <Run Text="→" Foreground="#999"/>
+                                                <Run Text="{Binding Receiver}" FontFamily="Consolas"/>
+                                                </TextBlock>
+                                                <StackPanel Orientation="Horizontal" Margin="0,4">
+                                                    <materialDesign:PackIcon 
+                                                    Kind="{Binding StatusIcon}"
+                                                    Foreground="{Binding TransferStatus, Converter={StaticResource StatusColorConverter}}"
+                                                    Width="16"/>
+                                                    <TextBlock Text="{Binding TransferStatus, Converter={StaticResource  StatusTextConverter}}" Foreground="{Binding TransferStatus, Converter={StaticResource StatusColorConverter}}" Margin="4,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <!-- 时间显示 -->
+                                            <TextBlock Grid.Column="2"
+                                                 Text="{Binding CreationTime, StringFormat='yyyy-MM-dd HH:mm'}"
+                                                 Foreground="#666"
+                                                 Margin="8,0"/>
+                                        </Grid>
+                                    </Expander.Header>
+
+                                    <!-- 详情内容 -->
+                                    <StackPanel Margin="16">
+                                        <!-- 收款方详情 -->
+                                                                                    <GroupBox Header="{Binding [PaymentInformation], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"   Margin="0,4">
+                                            
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [ReceivingAccount], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding Receiver}" FontFamily="Consolas"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!-- 交易标识 -->
+                                        <GroupBox Header="{Binding [TransactionIdentifier], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"  Margin="0,8">
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource CopyableText}"
+                                                     ToolTip="{Binding TransactionHash}">
+                                                <Run Text="{Binding [TransactionHash], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" />
+                                                <Run Text="{Binding TransactionHash}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [RecentBlockhash], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="："/>
+                                                <Run Text="{Binding RecentBlockhash}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!-- 账户信息 -->
+                                        <GroupBox Header="{Binding [AccountInformation], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" Margin="0,8">
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [TransferOutAccountLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding Transferor}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [PaymentAccountLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding PayAccount}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [WalletIDLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding WalletId}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!-- 交易详情 -->
+                                        <GroupBox Header="{Binding [TransactionDetails], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" Margin="0,8">
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [TransactionTypeLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding TransactionType, Converter={StaticResource TransactionTypeConverter}}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [NetWorkTypeLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding NetWork}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [TransactionAmountLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                    <Run Text="{Binding TransferQuantity}" FontWeight="DemiBold"/>
+                                    <Run Text="{Binding TokenSymbol}" Foreground="#666"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [FeeLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding Fee, Converter={StaticResource                                    FeeConverter}}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!-- 扩展信息 -->
+                                        <GroupBox Header="{Binding [ExtendedInformation], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" Margin="0,8">
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [TokenSymbolLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding TokenSymbol}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [TokenMintLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding TokenMint}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [IsAssociatedTokenAccountLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding IsAssociatedTokenAccount, Converter={StaticResource BoolToYesNoConverter}}"/>
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource CopyableText}">
+                                                <Run Text="{Binding [MemoStringLabel], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                                <Run Text="{Binding Remark}" FontStyle="Italic"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </GroupBox>
+
+                                        <!-- JSON元数据 -->
+                                        <GroupBox Header="{Binding [JsonContent], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" 
+                                            Margin="0,8"
+                                            Visibility="{Binding JsonContent, Converter={StaticResource NullToVisibility}}">
+                                            <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                                                <TextBlock Text="{Binding JsonContent}" 
+                                                     Style="{StaticResource CopyableText}"
+                                                     FontFamily="Consolas"
+                                                     TextWrapping="Wrap"/>
+                                            </ScrollViewer>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </Expander>
+                            </materialDesign:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </GroupBox>
+
+        <!-- 添加Snackbar通知 -->
+        <materialDesign:Snackbar x:Name="NotificationBar"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Bottom"
+                               Margin="16"
+                               MessageQueue="{materialDesign:MessageQueue}"/>
+        <!-- 右侧交易表单 -->
+        <GroupBox  Grid.Column="2" Margin="5" Header="{Binding [TradingArea], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" Style="{StaticResource MaterialDesignGroupBox}" >
+            <materialDesign:Card Padding="24 20">
+                <StackPanel>
+                    <!-- 钱包选择 -->
+                    <ComboBox ItemsSource="{Binding Wallets}"
+         SelectedItem="{Binding SelectedWallet, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True}"
+         wpf:HintAssist.Hint="{Binding [Trading Wallet *], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" FontSize="15"
+         Style="{StaticResource MaterialDesignFloatingHintComboBox}" Cursor="">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="4">
+                                    <wpf:PackIcon Kind="Wallet" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{Binding Id,StringFormat='Wallet {0}'}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding MasterAccountPublicKey}" 
+                          Margin="8,0,0,0"
+                          Foreground="{DynamicResource SecondaryHueMidForegroundBrush}"
+                          FontFamily="Consolas"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock 
+          Text="{Binding Errors[SelectedWallet]}"
+          Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+          Margin="0,4,0,0"/>
+                    <!-- 交易类型 -->
+                    <wpf:Card Margin="0,0,0,16" Padding="10">
+                        <StackPanel>
+                            <TextBlock Text="{Binding [ChooseTransferType], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" FontSize="15" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,2"/>
+                            <StackPanel Orientation="Horizontal" Margin="8">
+                                <RadioButton x:Name="rbExisting" 
+                       Content="{Binding [SOL Transfer], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" FontSize="15"
+                       IsChecked="{Binding IsLamportsTransfer}"
+                       Style="{StaticResource MaterialDesignRadioButton}"
+                       Margin="0,0,24,0"/>
+                                <RadioButton x:Name="rbCustom" 
+                       Content="{Binding [SPLToken Transfer], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+                       IsChecked="{Binding IsTokenTransfer}"
+                       Style="{StaticResource MaterialDesignRadioButton}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </wpf:Card>
+
+                    <ComboBox  ItemsSource="{Binding WalletAccounts}" 
+         SelectedItem="{Binding SelectedWalletAccount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+         wpf:HintAssist.Hint="{Binding [SelectWalletAccount], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" FontSize="12" Visibility="{Binding IsTokenTransfer, Converter={StaticResource BoolToVisibilityConverter}}"
+         Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical" Margin="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="20"/>
+                                            <RowDefinition Height="20"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="5*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!--<TextBlock Grid.Row="0" Grid.Column="0" Text="账户地址：" />
+ -->
+                                        <!--<wpf:PackIcon Kind="ScriptTextKeyOutline" Margin="0,0,8,0"/>-->
+                                        <!--
+ <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding PublicKey}" />-->
+                                        <TextBlock Grid.Row="0" Grid.Column="0" FontSize="10" Text="{Binding [AccountType], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="10" Text=":" />
+                                        <TextBlock  Grid.Row="0" Grid.Column="2" Text="{Binding  AccountType}" />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Symbol}"/>
+                                        <TextBlock  Grid.Row="1" Grid.Column="1" Text="{Binding QuantityDecimal}"/>
+                                    </Grid>
+
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                   
+                    <TextBlock 
+          Text="{Binding Errors[SelectedTokenDef]}"
+          Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+          Margin="0,4,0,0"/>
+                    <!-- 代币输入区 -->
+                    <Grid Visibility="{Binding IsTokenTransfer, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox materialDesign:HintAssist.Hint="{Binding [LatestWalletBalance], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" IsReadOnly="True"
+                           materialDesign:TextFieldAssist.PrefixText="{Binding [Balance], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+                              Style="{StaticResource MaterialDesignOutlinedTextBox}" >
+                            <TextBox.Text>
+                                <MultiBinding StringFormat=" {0} : {1}">
+                                    <Binding Path="ShowNewWalletAccount.QuantityDecimal"/>
+                                    <Binding Path="ShowNewWalletAccount.Symbol"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <!--<Button Grid.Column="1"
+                          ToolTip="{Binding [SelectToken], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+                          Command="{Binding ShowTokenSelectorCommand}"
+                          Style="{StaticResource MaterialDesignIconButton}"
+                          Margin="8,0,0,0">
+                            <materialDesign:PackIcon Kind="Magnify" Width="24"/>
+                        </Button>-->
+                    </Grid>
+
+                    <!-- 接收地址 -->
+                    <TextBox materialDesign:HintAssist.Hint="{Binding [EnterReceivingAddress], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+                       materialDesign:TextFieldAssist.PrefixText="{Binding [ReceivingAddress], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+                       Text="{Binding ReceiverAddress,UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                       Style="{StaticResource MaterialDesignOutlinedTextBox}" 
+                       Margin="0,0,0,20">
+                        <!--<Validation.ErrorTemplate>
+                            <ControlTemplate>
+                                <StackPanel>
+                                    <AdornedElementPlaceholder/>
+                                    <TextBlock Text="{Binding [0].ErrorContent}" 
+                                         Foreground="{DynamicResource MaterialDesignValidationErrorColor}"
+                                         Margin="4,0"
+                                         FontSize="12"/>
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Validation.ErrorTemplate>-->
+                    </TextBox>
+
+                    <!-- 交易金额 -->
+                    <TextBox materialDesign:HintAssist.Hint="{Binding [TransferAmount], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+                   materialDesign:TextFieldAssist.PrefixText="{Binding [Amount], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"
+                   Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                   Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                   Margin="0,0,0,20">
+                        <!--<Validation.ErrorTemplate>
+                            <ControlTemplate>
+                                <StackPanel>
+                                    <AdornedElementPlaceholder/>
+                                    <TextBlock Text="{Binding [0].ErrorContent}" 
+                       Foreground="{DynamicResource MaterialDesignValidationErrorColor}"
+                         Margin="4,0" FontSize="12"/>
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Validation.ErrorTemplate>-->
+                    </TextBox>
+
+                    <!-- 确认按钮 -->
+                    <Button 
+                    Command="{Binding ConfirmCommand}"
+                    HorizontalAlignment="Stretch"
+                    Height="48"  
+                    FontSize="14">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <!-- 默认情况下设置 Content 为发送交易 -->
+                                <Setter Property="Content" Value="{Binding [Send Transaction], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}"/>
+                                <Setter Property="IsEnabled" Value="{Binding IsFormValid}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <!-- 默认背景颜色设置为灰色 -->
+                                <Setter Property="Background" Value="Gray"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="10" ShadowDepth="5" Color="Black"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="materialDesign:ButtonProgressAssist.IsIndicatorVisible"
+                    Value="{Binding IsProcessing}"/>
+                                <Style.Triggers>
+                                    <!-- 当 IsFormValid 为 true 时，将背景颜色设置为紫色 -->
+                                    <DataTrigger Binding="{Binding IsFormValid}" Value="True">
+                                        <Setter Property="Background" Value="MediumPurple"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsProcessing}" Value="True">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <materialDesign:PackIcon Kind="SendClock" 
+                                                         Width="24"
+                                                         Height="24"/>
+                                                    <TextBlock Text="{Binding [Transaction processing in progress...], Source={x:Static local:LanguageManager.Instance}, Mode=OneWay}" Margin="8,0,0,0"/>
+                                                </StackPanel>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <!--<TextBlock Text="{Binding IsProcessing}"/>
+                    <TextBlock Text="{Binding IsFormValid}"/>-->
+                </StackPanel>
+            </materialDesign:Card>
+        </GroupBox>
+    </Grid>
+</UserControl>

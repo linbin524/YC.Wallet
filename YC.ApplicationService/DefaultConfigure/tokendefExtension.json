@@ -1,0 +1,54 @@
+{
+  "// 注释说明": "以下是扩展SPL代币配置示例，实际使用时请删除注释行",
+  "// tokenDefs": "代币定义数组，包含自定义SPL代币信息",
+  "tokenDefs": [
+    {
+      "// 注释": "用户添加的SPL代币 - 6kAHnbU2S5ct74j9h8ePdr1ggEJiWqHE8X9C85KdqpW9",
+      "Mint": "5GR7LqWPpw5Y8q1D3yN27wmWkekef9nbAoetvW6e251M",
+      "Name": "New QuanTum Token",
+      "Symbol": "NQT",
+      "DecimalPlaces": 5,
+      "SupplyNetWork": "Solana",
+      "Type": "SPL",
+      "SellerFee": 0,
+      "CoinGeckoId": "",
+      "TokenProjectUrl": "",
+      "TokenLogoUrl": ""
+    }
+    // {
+    //   "// Mint": "代币铸造地址，SPL代币的唯一标识符",
+    //   "Mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    //   "// Name": "代币全名",
+    //   "Name": "USD Coin",
+    //   "// Symbol": "代币符号/简称",
+    //   "Symbol": "USDC",
+    //   "// DecimalPlaces": "代币小数位数",
+    //   "DecimalPlaces": 6,
+    //   "// SupplyNetWork": "代币所在网络",
+    //   "SupplyNetWork": "Solana",
+    //   "// Type": "代币类型",
+    //   "Type": "SPL",
+    //   "// SellerFee": "卖方手续费（可选）",
+    //   "SellerFee": 0,
+    //   "// CoinGeckoId": "CoinGecko API ID（可选，用于价格查询）",
+    //   "CoinGeckoId": "usd-coin",
+    //   "// TokenProjectUrl": "代币项目官网（可选）",
+    //   "TokenProjectUrl": "https://www.centre.io/",
+    //   "// TokenLogoUrl": "代币Logo图片URL（可选）",
+    //   "TokenLogoUrl": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png"
+    // },
+    // {
+    //   "// 示例2": "另一个自定义代币示例",
+    //   "Mint": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+    //   "Name": "Tether USD",
+    //   "Symbol": "USDT",
+    //   "DecimalPlaces": 6,
+    //   "SupplyNetWork": "Solana",
+    //   "Type": "SPL",
+    //   "SellerFee": 0,
+    //   "CoinGeckoId": "tether",
+    //   "TokenProjectUrl": "https://tether.to/",
+    //   "TokenLogoUrl": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png"
+    // }
+  ]
+}

@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Solnet.Serum" Version="6.0.13" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BasicLayer(net)\YC.Common\YC.Common.csproj" />
+    <ProjectReference Include="..\..\Sdk\YC.Solana\Solnet-master\src\Solnet.Programs\Solnet.Programs.csproj" />
+    <ProjectReference Include="..\..\Sdk\YC.Solana\Solnet-master\src\Solnet.Rpc\Solnet.Rpc.csproj" />
+    <ProjectReference Include="..\..\Sdk\YC.Solana\YC.SolanaSdkService\YC.SolanaSdkService.csproj" />
+    <ProjectReference Include="..\..\YC.ApplicationService\YC.ApplicationService.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Solnet.Examples">
+      <HintPath>..\..\Sdk\YC.Solana\Solnet-master\src\Solnet.Examples\bin\Debug\net8.0\Solnet.Examples.dll</HintPath>
+    </Reference>
+    <Reference Include="Solnet.Extensions">
+      <HintPath>..\..\Sdk\YC.Solana\Solnet-master\src\Solnet.Examples\bin\Debug\net8.0\Solnet.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Solnet.KeyStore">
+      <HintPath>..\..\Sdk\YC.Solana\Solnet-master\src\Solnet.Examples\bin\Debug\net8.0\Solnet.KeyStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Solnet.Wallet">
+      <HintPath>..\..\Sdk\YC.Solana\Solnet-master\src\Solnet.Examples\bin\Debug\net8.0\Solnet.Wallet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

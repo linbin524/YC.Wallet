@@ -1,0 +1,16 @@
+{
+  "name": "T-CTK",
+  "symbol": "T-CTK Coin",
+  "description": "这是一个新的 T-CTK 代币，具有独特的功能和应用场景。",
+  "image": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+  "external_url": "https://example.com/token_website",
+  "seller_fee_basis_points": 0,
+  "properties": {
+    "files": [
+      {
+        "uri": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+        "type": "image/png"
+      }
+    ]
+  }
+}

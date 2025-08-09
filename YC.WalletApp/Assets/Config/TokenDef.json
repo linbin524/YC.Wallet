@@ -1,0 +1,63 @@
+{
+  "TokenDefs": [
+    {
+      "Mint": "AhxWF63HAXZbFaCP6HAEVE8X5EYCBhbQVovBFtVqiQBi",
+      "Symbol": "CTK",
+      "CurrentSupply": "100,983,660",
+      "DecimalPlaces": 2,
+      "Name": "碳币",
+      "MintAuthority": "2c4LceGaiyvFsJAmkq1Fk6YmcJVySa4abmugmYCytyEe",
+      "SupplyNetWork": "DevNet"
+    },
+    {
+      "Mint": "7nGK8ue6S8LiwfQsDu2gpcq7enSY2PnTFRTMin7SrTuU",
+      "Symbol": "ACKT",
+      "CurrentSupply": "100,000,000",
+      "DecimalPlaces": 2,
+      "Name": "ACKT",
+      "MintAuthority": "2c4LceGaiyvFsJAmkq1Fk6YmcJVySa4abmugmYCytyEe",
+      "SupplyNetWork": "DevNet"
+    },
+    {
+      "Mint": "Dcvtnp4ekybHifRV8x4EHgSg1jMRWXrKzRCLikHJC6ng",
+      "Symbol": "KKKK",
+      "CurrentSupply": "100,000,000",
+      "DecimalPlaces": 2,
+      "Name": "KKKK",
+      "MintAuthority": "2c4LceGaiyvFsJAmkq1Fk6YmcJVySa4abmugmYCytyEe",
+      "SupplyNetWork": "DevNet"
+    },
+    {
+      "Mint": "Eaiar3tz48T6bRQomN677RGWj7HyPpxnRvFxCHF8uMot",
+      "Symbol": "TTTT",
+      "CurrentSupply": "100,000,000",
+      "DecimalPlaces": 2,
+      "Name": "TTTT",
+      "MintAuthority": "2c4LceGaiyvFsJAmkq1Fk6YmcJVySa4abmugmYCytyEe",
+      "SupplyNetWork": "DevNet"
+    },
+    {
+      "Mint": "4u5hXr1gqW8KC8eCZp45pcMnmFFDE9AgyRxLvDwBXwFp",
+      "Symbol": "T-CTK",
+      "CurrentSupply": "100,000,000",
+      "DecimalPlaces": 2,
+      "Name": "T-CTK",
+      "MintAuthority": "2c4LceGaiyvFsJAmkq1Fk6YmcJVySa4abmugmYCytyEe",
+      "SupplyNetWork": "DevNet",
+      "Type": "SPLToken"
+    },
+    {
+      "Mint": "4tKoHGDRg76eASjpgMDt1DioGBPrFZSZ2Eij4c3LecJD",
+      "Symbol": "CTK-NFT",
+      "CurrentSupply": "100,000,000",
+      "DecimalPlaces": 2,
+      "Name": "碳币-NFT",
+      "MintAuthority": "GqsriSwrc8fAgoqvfgoJ3JNE9m8Z2axFTrU5ntFjbcT1",
+      "SellerFee": "5%",
+      "SupplyNetWork": "DevNet",
+      "Type": "NFT"
+    }
+
+  ]
+}
+

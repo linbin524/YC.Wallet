@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Controls\AccountControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\TokenDefControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\TransactionControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\WalletControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Domain\PartViewControl\CreateAssociatedAccountControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Domain\PartViewControl\DataGridPaginationControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resources\GlobalResources.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\MenuControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\AddAccountPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Login.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\CustomMessageBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\AccountControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\TokenDefControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\TransactionControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\WalletControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Domain\PartViewControl\DataGridPaginationControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Domain\PartViewControl\SampleProgressDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Domain\PartViewControl\ShowDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Domain\PartViewControl\CreateAssociatedAccountControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Domain\PartViewControl\WalletExportDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\GlobalResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\VaildationTextBoxStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\AddAccountPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Register.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Login.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\MenuControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CustomMessageBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

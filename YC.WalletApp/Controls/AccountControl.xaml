@@ -1,0 +1,219 @@
+﻿<UserControl x:Class="YC.WalletApp.Controls.AccountControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YC.WalletApp.Controls"
+             xmlns:localExtension="clr-namespace:YC.WalletApp.Extension"
+             xmlns:viewModel="clr-namespace:YC.WalletApp.ViewModels"
+             xmlns:domain="clr-namespace:YC.WalletApp.Domain"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:smtx="clr-namespace:ShowMeTheXAML;assembly=ShowMeTheXAML"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <sys:Double x:Key="FieldWidth">200</sys:Double>
+        <Thickness x:Key="IconMargin">0,0,8,0</Thickness>
+        <Style  TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Setter Property="Margin" Value="0,8" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+        <x:Array x:Key="Options" Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+            <sys:String>选项 1</sys:String>
+            <sys:String>选项 2</sys:String>
+            <sys:String>选项 3</sys:String>
+        </x:Array>
+
+        <!-- 定义通用的输入框样式，包含验证错误处理 -->
+        <Style TargetType="{x:Type Control}" x:Key="InputStyle">
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=HasPasswordError, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="ToolTip" Value="{Binding Path=PasswordError, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- PasswordBox 样式，基于通用输入框样式 -->
+        <Style x:Key="FieldIcon" TargetType="materialDesign:PackIcon">
+            <Setter Property="DockPanel.Dock" Value="Left" />
+            <Setter Property="Margin" Value="{StaticResource IconMargin}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="FieldDockPanel" TargetType="DockPanel">
+            <Setter Property="Margin" Value="0,0,8,16" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Width" Value="{StaticResource FieldWidth}" />
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <WrapPanel Grid.Row="0" Margin="0 5">
+            <Button Width="90"
+          Content="创建账户"
+          IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+        
+          ToolTip="MaterialDesignFlatMidButton" Click="Button_Click" />
+        </WrapPanel>
+
+        <Border Grid.Row="1"  Margin="10 5" Padding="5" BorderThickness="1" BorderBrush="Gray" Background="White" CornerRadius="15">
+            <ScrollViewer>
+             <ItemsControl  Grid.IsSharedSizeScope="True" ItemsSource="{Binding Items2}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:AccountSelectableViewModel}">
+                        <Border x:Name="Border"
+                           Padding="8"
+                           BorderBrush="{DynamicResource MaterialDesignDivider}"
+                           BorderThickness="0,0,0,1">
+                            <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="Checkerz" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <ToggleButton VerticalAlignment="Center"
+                                   Content="{Binding Code}"
+                                   IsChecked="{Binding IsSelected}"
+                                   Style="{StaticResource MaterialDesignActionLightToggleButton}" />
+                                   <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                       <TextBlock FontWeight="Bold" Text="{Binding Name}" />
+                                       <TextBlock Text="{Binding Description}" />
+                                   </StackPanel>
+                                  
+                                </Grid>
+                        </Border>
+
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            </ScrollViewer>
+        </Border>
+        <GroupBox  Grid.Row="1" Grid.Column="1" Margin="16" Header="账户信息" Style="{StaticResource MaterialDesignGroupBox}">
+            <StackPanel Margin="20">
+                <Label Content="姓名:"/>
+                <TextBox materialDesign:HintAssist.Hint="Your name here" 
+                    Text="{Binding Name, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}">
+                </TextBox>
+                <Label Content="邮箱:"/>
+                <TextBox Text="{Binding Email, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}">
+                    <TextBox.ToolTip>
+                        <Binding Path="(Validation.Errors)[0].ErrorContent" RelativeSource="{RelativeSource Self}"/>
+                    </TextBox.ToolTip>
+                </TextBox>
+                <Label Content="密码:"/>
+                <materialDesign:PackIcon Foreground="{Binding ElementName=PasswordBox, Path=BorderBrush}"
+                         Kind="Key"
+                         Style="{StaticResource FieldIcon}" />
+
+                <PasswordBox x:Name="PasswordBox"
+         materialDesign:HintAssist.HelperText="At least 8 characters"
+         materialDesign:HintAssist.Hint="Password"
+         materialDesign:TextFieldAssist.HasClearButton="True"
+         PasswordChanged="PasswordBox_PasswordChanged" Tag="{Binding}"/>
+                <CheckBox Content="同意协议" IsChecked="{Binding IsAgreed, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}">
+                    <CheckBox.ToolTip>
+                        <Binding Path="(Validation.Errors)[0].ErrorContent" RelativeSource="{RelativeSource Self}"/>
+                    </CheckBox.ToolTip>
+                </CheckBox>
+                <Label Content="选择一项:"/>
+                <ComboBox ItemsSource="{Binding Source={StaticResource Options}}" 
+                      SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}">
+                    <ComboBox.ToolTip>
+                        <Binding Path="(Validation.Errors)[0].ErrorContent" RelativeSource="{RelativeSource Self}"/>
+                    </ComboBox.ToolTip>
+                </ComboBox>
+                <Button Content="提交" Margin="0,20,0,0" 
+                    Click="Submit_Click" 
+                    IsEnabled="{Binding IsValid}"/>
+            </StackPanel>
+
+            <!--<StackPanel>
+            <materialDesign:ColorZone HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Mode="Light">
+                <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    --> 
+            <!-- Row 1 --><!--
+                    <TextBlock Text="姓名：" Grid.Row="0" Grid.Column="0" Margin="5 30"/>
+                    <TextBox x:Name="Name" Grid.Row="0" Grid.Column="1" Margin="5 20"
+          materialDesign:HintAssist.Hint="Your name here"   materialDesign:HintAssist.HelperText="Helper text longer than error">
+                                <TextBox.Text>
+                                    <Binding Path="Name" UpdateSourceTrigger="LostFocus">
+                            <Binding.ValidationRules>
+                                    <domain:NotEmptyValidationRule  ValidatesOnTargetUpdated="True" />
+                                    <domain:EmailValidationRule  ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                             </TextBox.Text>
+                            </TextBox>
+                    <TextBlock Text="性别：" Grid.Row="0" Grid.Column="2" Margin="5 30"/>
+                    <TextBox x:Name="UserName1" Grid.Row="0" Grid.Column="3" Margin="5 20"
+materialDesign:HintAssist.Hint="Your name here">
+                            <Binding Path="tName" UpdateSourceTrigger="LostFocus" ValidatesOnDataErrors="True">
+                            <Binding.ValidationRules>
+                                <domain:NotEmptyValidationRule  ValidatesOnTargetUpdated="True"  />
+                                <domain:EmailValidationRule  ValidatesOnTargetUpdated="True" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox>
+
+
+                </Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                      
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    --> 
+            <!-- Row 1 --><!--
+                    <TextBlock Text="姓名：" Grid.Row="0" Grid.Column="0" Margin="5 10"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5" materialDesign:HintAssist.Hint="请输入用户名"/>
+                           
+                            <TextBlock Text="性别：" Grid.Row="0" Grid.Column="2" Margin="5 10"/>
+                    <TextBox Grid.Row="0" Grid.Column="3" Margin="5"/>
+
+                   
+                </Grid>
+            </StackPanel>
+            </materialDesign:ColorZone>
+                <Button Content="{Binding [Submit], Source={x:Static localExtension:LanguageManager.Instance}}" Margin="15" Click="Submit_Click" Visibility ="{Binding IsValidated}"></Button>
+            </StackPanel>-->
+        </GroupBox>
+    </Grid>
+</UserControl>

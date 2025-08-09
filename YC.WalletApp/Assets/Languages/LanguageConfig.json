@@ -1,0 +1,17 @@
+﻿{
+  "DefaultLanguage": "中文",
+  "SupportedLanguages": [
+    {
+      "Code": "en-US",
+      "Name": "English",
+      "Logo": "../Assets/Images/Languages/english.png",
+      "JsonPath": "en-US.json"
+    },
+    {
+      "Code": "zh-CN",
+      "Name": "中文",
+      "Logo": "../Assets/Images/Languages/china.png",
+      "JsonPath": "zh-CN.json"
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+﻿<UserControl x:Class="YC.WalletApp.Domain.PartViewControl.CreateAssociatedAccountControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             xmlns:local="clr-namespace:YC.WalletApp.Domain.PartViewControl"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:localEx="clr-namespace:YC.WalletApp.Extension" xmlns:system="clr-namespace:System;assembly=netstandard"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <localEx:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+    
+    <Grid Margin="24">
+        <Grid.Resources>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignBody1TextBlock}"/>
+        </Grid.Resources>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,16" MaxWidth="500" MinWidth="500">
+                <TextBlock Text="{Binding [CreateAssociationAccount], Source={x:Static localEx:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,12"/>
+                <!-- 钱包选择 -->
+                <wpf:Card Margin="0,0,0,32" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <ComboBox ItemsSource="{Binding Wallets}"
+                                SelectedItem="{Binding SelectedWallet, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True}"
+                                wpf:HintAssist.Hint="{Binding [SelectWalletHint], Source={x:Static localEx:LanguageManager.Instance}}" FontSize="20"
+                                Style="{StaticResource MaterialDesignFloatingHintComboBox}" Cursor="">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="4">
+                                        <wpf:PackIcon Kind="Wallet" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Id,StringFormat='Wallet {0}'}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding MasterAccountPublicKey}" 
+                                                 Margin="8,0,0,0"
+                                                 Foreground="{DynamicResource SecondaryHueMidForegroundBrush}"
+                                                 FontFamily="Consolas"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock Grid.Row="1" 
+                                 Text="{Binding Errors[SelectedWallet]}"
+                                 Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                 Margin="0,4,0,0"/>
+                        <ComboBox Grid.Row="2"  ItemsSource="{Binding Wallets}"
+        SelectedItem="{Binding SelectedPayWallet,UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True}"
+        wpf:HintAssist.Hint="{Binding [PayWalletHint], Source={x:Static localEx:LanguageManager.Instance}}" FontSize="20"
+        Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="4">
+                                        <wpf:PackIcon Kind="Wallet" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Id,StringFormat='Wallet {0}'}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding MasterAccountPublicKey}" 
+                         Margin="8,0,0,0"
+                         Foreground="{DynamicResource SecondaryHueMidForegroundBrush}"
+                         FontFamily="Consolas"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock Grid.Row="3" 
+         Text="{Binding Errors[SelectedPayWallet]}"
+         Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+         Margin="0,4,0,0"/>
+                    </Grid>
+                </wpf:Card>
+
+                <!-- 创建方式 -->
+                <wpf:Card Margin="0,0,0,24" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="{Binding [ChooseCreateType], Source={x:Static localEx:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,12"/>
+                        <StackPanel Orientation="Horizontal" Margin="8">
+                            <RadioButton x:Name="rbExisting" 
+                                       Content="{Binding [UseExistingTokenDef], Source={x:Static localEx:LanguageManager.Instance}}" FontSize="15"
+                                       IsChecked="{Binding IsTokenDefSelected}"
+                                       Style="{StaticResource MaterialDesignRadioButton}"
+                                       Margin="0,0,24,0"/>
+                            <RadioButton x:Name="rbCustom" 
+                                       Content="{Binding [CustomInput], Source={x:Static localEx:LanguageManager.Instance}}"
+                                       IsChecked="{Binding IsCustomInputSelected}"
+                                       Style="{StaticResource MaterialDesignRadioButton}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </wpf:Card>
+
+                <!-- 现有TokenDef选择 -->
+                <wpf:Card Margin="0,0,0,24" Padding="16" 
+                        Visibility="{Binding IsTokenDefSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                    
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <ComboBox Grid.Row="0" ItemsSource="{Binding TokenDefs}" IsEnabled="{Binding IsTokenDefSelected}"
+                                SelectedItem="{Binding SelectedTokenDef, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True}"
+                                wpf:HintAssist.Hint="{Binding [SelectExistingTokenDefHint], Source={x:Static localEx:LanguageManager.Instance}}" FontSize="15"
+                                Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="4">
+                                        <wpf:PackIcon Kind="ScriptTextKeyOutline" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Symbol}" Margin="8,0,0,0"
+                                                 Foreground="{DynamicResource SecondaryHueMidForegroundBrush}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <!-- 错误提示 -->
+                        <TextBlock Grid.Row="1" 
+                         Text="{Binding Errors[SelectedTokenDef]}" 
+                                 Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"
+                                 Margin="0,4,0,0"/>
+                    </Grid>
+                </wpf:Card>
+
+                <!-- 自定义输入 -->
+                <wpf:Card Margin="0,0,0,24" Padding="16"
+                        Visibility="{Binding IsCustomInputSelected}" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding [ChooseCreateType], Source={x:Static localEx:LanguageManager.Instance}}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,12"/>
+                        <!-- Mint -->
+                        <TextBox Grid.Row="1" 
+                               wpf:HintAssist.Hint="{Binding [MintAddressHint], Source={x:Static localEx:LanguageManager.Instance}}" IsEnabled="{Binding IsCustomInputSelected}"
+                               Text="{Binding CustomMint, ValidatesOnDataErrors=True}"
+                               Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                               Margin="0,0,0,8"/>
+
+                        <!-- Symbol -->
+                        <TextBox Grid.Row="2"
+                               wpf:HintAssist.Hint="{Binding [SymbolHint], Source={x:Static localEx:LanguageManager.Instance}}" IsEnabled="{Binding IsCustomInputSelected}"
+                               Text="{Binding CustomSymbol, ValidatesOnDataErrors=True}"
+                               Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                               Margin="0,8"/>
+
+                        <!-- Decimal -->
+                        <TextBox Grid.Row="3"
+                               wpf:HintAssist.Hint="{Binding [DecimalPlacesHint], Source={x:Static localEx:LanguageManager.Instance}}" IsEnabled="{Binding IsCustomInputSelected}"
+                               Text="{Binding CustomDecimalPlaces, ValidatesOnDataErrors=True}"
+                               Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                               Margin="0,8"/>
+
+                        <!-- 错误汇总 -->
+                        <ItemsControl Grid.Row="4"
+                                    ItemsSource="{Binding CustomErrors}"
+                                    Margin="0,8,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" 
+                                             Foreground="{DynamicResource MaterialDesignValidationErrorBrush}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </wpf:Card>
+
+                <!-- 操作按钮 -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="{Binding [CreateAssociatedAccountButton], Source={x:Static localEx:LanguageManager.Instance}}"
+                          Command="{x:Static wpf:DialogHost.CloseDialogCommand}"
+                          Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                          
+                          Height="42"
+                          wpf:ButtonProgressAssist.IsIndicatorVisible="{Binding IsBusy}"
+                            IsEnabled="{Binding IsBusy}"
+                          Margin="0,0,16,0">
+                        <Button.ContentTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <wpf:PackIcon Kind="Plus" Width="20" Height="20" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{Binding [CreateAssociatedAccountButton], Source={x:Static localEx:LanguageManager.Instance}}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                        <Button.CommandParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Button.CommandParameter>
+                    </Button>
+
+                    <Button Content="{Binding [Close], Source={x:Static localEx:LanguageManager.Instance}}" x:Name="btn_Close"
+                          Command="{x:Static wpf:DialogHost.CloseDialogCommand}"
+                          Style="{StaticResource MaterialDesignOutlinedButton}"
+                          Width="120"
+                          Height="42">
+                        <Button.CommandParameter>
+                            <system:Boolean>False</system:Boolean>
+                        </Button.CommandParameter>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

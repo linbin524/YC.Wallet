@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="YC.WalletApp.Controls.MenuControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:localControl="clr-namespace:YC.WalletApp.Controls"
+             xmlns:localExtension="clr-namespace:YC.WalletApp.Extension"
+             xmlns:localView="clr-namespace:YC.WalletApp.Views"
+             xmlns:prism="http://prismlibrary.com/" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <localExtension:LocalizationConverter x:Key="LocalizationConverter"/>
+        <localView:ItemTemplateSelector x:Key="ItemTemplateSelector">
+            <localView:ItemTemplateSelector.NonEmptyTemplate>
+                <DataTemplate>
+
+                    <!-- 你的非空模板代码，如上面的Expander和ItemsControl -->
+                    <Expander x:Name="MenuExPander"  Margin="0 15" BorderThickness="0" Background="White" Foreground="#FF959595">
+
+                        <Expander.HeaderTemplate>
+                            <DataTemplate>
+
+                                <!-- 设置最小高度 -->
+                                <StackPanel Orientation="Horizontal"  Margin="35 0 15 10">
+                                    <materialDesign:PackIcon Kind="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=DataContext.IconFont}" Width="30" Height="30"  HorizontalAlignment="Right" FontSize="70" />
+                                    <TextBlock Margin="15 0 0 0"  Text="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=DataContext.Title}" VerticalAlignment="Center" FontSize="15" />
+                                </StackPanel>
+
+                            </DataTemplate>
+                        </Expander.HeaderTemplate>
+                        <!-- Expander的内容部分 -->
+                        <Expander.Content>
+                            <!-- 嵌套ItemsControl，用于显示Items集合 -->
+                            <StackPanel Orientation="Horizontal" Margin="35 0 0 0">
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!-- 使用GroupName将所有RadioButton组合在一起 -->
+                                            <RadioButton GroupName="MyGroup"  Style="{StaticResource RadioButtonStyle}" IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+Click="RadioButton_Click">
+                                                <StackPanel Orientation="Horizontal" Margin="15 5 0 0">
+                                                    <materialDesign:PackIcon Kind="{Binding IconFont}" Width="30" Height="30"  HorizontalAlignment="Right" />
+                                                    <!--<TextBlock Text="{Binding IconFont}" FontFamily="../Assets/Fonts/#iconfont" HorizontalAlignment="Right"/>-->
+                                                    <TextBlock Margin="15 0 0 0" Text="{Binding Title}" VerticalAlignment="Center" FontSize="15"/>
+                                                </StackPanel>
+                                            </RadioButton>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+                </DataTemplate>
+            </localView:ItemTemplateSelector.NonEmptyTemplate>
+           
+            <localView:ItemTemplateSelector.EmptyTemplate>
+                <DataTemplate>
+                    <!-- 你的空模板代码，可以是简单的TextBlock等 -->
+                    <RadioButton 
+             VerticalContentAlignment="Center" 
+               Style="{StaticResource RadioButtonStyle}"
+                           CommandParameter="{Binding}" Click="RadioButton_Click">
+                        <RadioButton.IsChecked>
+                            <Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" Mode="TwoWay"/>
+                        </RadioButton.IsChecked>
+                        <StackPanel Orientation="Horizontal" Margin="40 0 0 0">
+                            <!--<TextBlock  Text="{Binding IconFont}" FontFamily="../Assets/Fonts/#iconfont"  
+                                     HorizontalAlignment="Right" />-->
+                            <materialDesign:PackIcon Kind="{Binding IconFont}" Width="30" Height="30" HorizontalAlignment="Right"/>
+
+                            <TextBlock Margin="15 0 0 0"  Text="{Binding Title}" VerticalAlignment="Center" FontSize="15" />
+                        </StackPanel>
+
+                    </RadioButton>
+                </DataTemplate>
+            </localView:ItemTemplateSelector.EmptyTemplate>
+        </localView:ItemTemplateSelector>
+        
+    </UserControl.Resources>
+    <Grid>
+        <ListBox Grid.Row="1" x:Name="MenuListBox"  ItemsSource="{Binding Modules}"  ItemTemplateSelector="{StaticResource ItemTemplateSelector}" Background="Transparent"  BorderThickness="0">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Grid>
+                                    <Border Name="border"/>
+                                    <ContentPresenter/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" TargetName="border" Value="Transparent"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+    </Grid>
+</UserControl>
