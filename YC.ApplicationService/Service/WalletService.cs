@@ -149,7 +149,7 @@ namespace YC.ApplicationService.Service
                     var insertRes = await SQLiteUtils._freesql.Insert<WalletEntity>(obj).ExecuteAffrowsAsync();
                     if (insertRes==0)
                     {
-                        sb.AppendLine($"插入主账户为：{obj.Account}的钱包失败！");
+                        sb.AppendLine($"插入主账户为：{obj.Account.PublicKey.Key}的钱包失败！");
                     }
                 }
                 tempList.Add(obj);

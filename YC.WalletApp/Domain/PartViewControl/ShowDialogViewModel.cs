@@ -1,5 +1,6 @@
 ﻿using MaterialDesign3Demo.Domain;
 using MaterialDesignThemes.Wpf;
+using MySqlX.XDevAPI.Common;
 using Prism.Ioc;
 using Prism.Mvvm;
 using System;
@@ -46,10 +47,18 @@ namespace YC.WalletApp.Domain.PartViewControl
             };
 
             //show the dialog
-            var result = await DialogHost.Show(view, DialogIdentifier, ClosingEventHandler);
+            try
+            {
+                var result = await DialogHost.Show(view, DialogIdentifier, ClosingEventHandler);
 
-            //check the result...
-            Debug.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
+                //check the result...
+                Debug.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+
+            }
         }
 
         private void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
