@@ -151,9 +151,15 @@ namespace YC.WalletApp.ViewModels
             //    Title = DefaultConfig.ContorlLanguage("LogManage"),
             //    UserControl = _container.Resolve<TestUserControl>()
             //},
-            
+            new ModuleInfo()
+            {
+                ModuleId = "MintTokenManage",
+                IconFont = "AccountBoxMultipleOutline",
+                Title = DefaultConfig.ContorlLanguage("MintTokenManage"),
+                UserControl = _container.Resolve<MintTokenControl>()
+            },
 
-            
+
                 }
             });
             

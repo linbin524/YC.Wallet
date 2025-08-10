@@ -129,14 +129,14 @@ namespace YC.WalletApp.Controls
                 {
                     ChangeDataBinding();
                    
-                     CommonExtension.ShowDialog("导入钱包成功！");
+                     CommonExtension.ShowDialog(LanguageManager.Instance["WalletImportSuccess"]);
                 }
                 else {
                      CommonExtension.ShowDialog(res.Message);
                 }
             }
             else {
-                 CommonExtension.ShowDialog("文件不存在！");
+                 CommonExtension.ShowDialog(LanguageManager.Instance["FileNotExist"]);
             }
            
         }
@@ -268,11 +268,11 @@ namespace YC.WalletApp.Controls
             var result = customMessageBox.ShowDialog();
             if (result == true)
             {
-                 CommonExtension.ShowDialog("你点击了确定");
+                 CommonExtension.ShowDialog(LanguageManager.Instance["UserClickedConfirm"]);
             }
             else
             {
-                 CommonExtension.ShowDialog("你点击了取消");
+                 CommonExtension.ShowDialog(LanguageManager.Instance["UserClickedCancel"]);
             }
         }
 
@@ -308,7 +308,7 @@ namespace YC.WalletApp.Controls
             }
             catch (Exception ex)
             {
-                 CommonExtension.ShowDialog($"复制失败: {ex.Message}");
+                 CommonExtension.ShowDialog(string.Format(LanguageManager.Instance["CopyToClipboardFailed"], ex.Message));
             }
         }
 
@@ -325,11 +325,11 @@ namespace YC.WalletApp.Controls
                 {
                     Clipboard.SetText(button.CommandParameter.ToString());
                     // 可选：显示复制成功提示
-                     CommonExtension.ShowDialog("已复制到剪贴板");
+                     CommonExtension.ShowDialog(LanguageManager.Instance["CopyToClipboardSuccess"]);
                 }
                 catch (Exception ex)
                 {
-                     CommonExtension.ShowDialog($"复制失败: {ex.Message}");
+                     CommonExtension.ShowDialog(string.Format(LanguageManager.Instance["CopyToClipboardFailed"], ex.Message));
                 }
             }
         }

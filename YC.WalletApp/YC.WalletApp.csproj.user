@@ -45,6 +45,9 @@
     <Page Update="Controls\AccountControl.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Controls\MintTokenControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\TokenDefControl.xaml">
       <SubType>Designer</SubType>
     </Page>

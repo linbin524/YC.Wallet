@@ -16,7 +16,7 @@ namespace YC.WalletApp.Extension
         /// <summary>
         /// 资源
         /// </summary>
-        private readonly ResourceManager _resourceManager;
+        //private readonly ResourceManager _resourceManager;
 
         /// <summary>
         /// 懒加载
@@ -28,7 +28,7 @@ namespace YC.WalletApp.Extension
         public LanguageManager()
         {
             //获取此命名空间下Resources的Lang的资源，Lang可以修改
-            _resourceManager = new ResourceManager("WpfApp1.Resources.Lang", typeof(LanguageManager).Assembly);
+          //  _resourceManager = new ResourceManager("WpfApp1.Resources.Lang", typeof(LanguageManager).Assembly);
         }
 
         /// <summary>

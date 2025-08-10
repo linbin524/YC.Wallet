@@ -119,8 +119,17 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
         // 订阅语言变化事件
         LanguageManager.Instance.PropertyChanged += OnLanguageChanged;
         
-        LoadData();
-        
+        // 先加载数据，数据加载完成后再进行验证
+        LoadDataAsync();
+    }
+
+    /// <summary>
+    /// 异步加载数据
+    /// </summary>
+    private async void LoadDataAsync()
+    {
+        await LoadData();
+        // 数据加载完成后再进行验证
         ValidateAll();
     }
 
@@ -185,6 +194,16 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
             {
                 // 记录异常但不中断程序
                 System.Diagnostics.Debug.WriteLine($"Language change validation error: {ex.Message}");
+                // 如果验证失败，尝试清理错误状态
+                try
+                {
+                    _errors.Clear();
+                    ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(string.Empty));
+                }
+                catch (Exception cleanupEx)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error cleanup failed: {cleanupEx.Message}");
+                }
             }
         }
     }
@@ -247,22 +266,41 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
     {
         get => _selectedWallet;
         set => SetProperty(ref _selectedWallet, value, () => {
-            ValidateProperty(SelectedWallet, nameof(SelectedWallet));
-            //更新WalletAccount
-            var walletAccounts = SQLiteUtils._freesql.Select<WalletAccountEntity>()
-            .Where(x => x.BelongWalletId == SelectedWallet.Id
-            && !x.TokenName.Contains("UnKnown")).ToList();
-            WalletAccounts= walletAccounts.Adapt<ObservableCollection<WalletAccountEntity>>();
-            foreach (var item in WalletAccounts)
+            try
             {
-                if (!item.IsAssociatedTokenAccount)
+                // 无论SelectedWallet是否为null都要进行验证，ValidateSelectedWallet会处理null值
+                ValidateProperty(SelectedWallet, nameof(SelectedWallet));
+                
+                //更新WalletAccount
+                if (SelectedWallet != null)
                 {
-                    item.AccountType = DefaultConfig.ContorlLanguage("WalletAccount");
+                    var walletAccounts = SQLiteUtils._freesql.Select<WalletAccountEntity>()
+                    .Where(x => x.BelongWalletId == SelectedWallet.Id
+                    && !x.TokenName.Contains("UnKnown")).ToList();
+                    WalletAccounts= walletAccounts.Adapt<ObservableCollection<WalletAccountEntity>>();
+                    foreach (var item in WalletAccounts)
+                    {
+                        if (!item.IsAssociatedTokenAccount)
+                        {
+                            item.AccountType = DefaultConfig.ContorlLanguage("WalletAccount");
+                        }
+                        else
+                        {
+                            item.AccountType = DefaultConfig.ContorlLanguage("TokenAssociatedAccount");
+                        }
+                    }
                 }
                 else
                 {
-                    item.AccountType = DefaultConfig.ContorlLanguage("TokenAssociatedAccount");
+                    // 如果SelectedWallet为null，清空WalletAccounts
+                    WalletAccounts = new ObservableCollection<WalletAccountEntity>();
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"SelectedWallet setter error: {ex.Message}");
+                // 如果出错，清空WalletAccounts
+                WalletAccounts = new ObservableCollection<WalletAccountEntity>();
             }
         });
     }
@@ -319,7 +357,10 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
     private void ValidateAll()
     {
         _errors.Clear();
+        
+        // 即使SelectedWallet为null也要进行验证，ValidateSelectedWallet会处理null值并返回相应错误
         ValidateProperty(SelectedWallet, nameof(SelectedWallet));
+        
         ValidateProperty(Amount, nameof(Amount));
         ValidateProperty(ReceiverAddress, nameof(ReceiverAddress));
         if (IsLamportsTransfer)//只有验证接受地址
@@ -336,6 +377,13 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
 
     private void ValidateProperty(object value, [CallerMemberName] string propertyName = null)
     {
+        // 添加空值检查，防止propertyName为null时抛出异常
+        if (string.IsNullOrEmpty(propertyName))
+        {
+            System.Diagnostics.Debug.WriteLine("ValidateProperty: propertyName 为空，跳过验证");
+            return;
+        }
+
         var context = new ValidationContext(this) { MemberName = propertyName };
         var results = new List<ValidationResult>();
 
@@ -384,8 +432,16 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
         return IsFormValid;
     }
 
-    public IEnumerable GetErrors(string propertyName) =>
-        _errors.TryGetValue(propertyName, out var errors) ? errors : Enumerable.Empty<string>();
+    public IEnumerable GetErrors(string propertyName)
+    {
+        // 添加空值检查，防止propertyName为null时出错
+        if (string.IsNullOrEmpty(propertyName))
+        {
+            return Enumerable.Empty<string>();
+        }
+        
+        return _errors.TryGetValue(propertyName, out var errors) ? errors : Enumerable.Empty<string>();
+    }
 
     public bool HasErrors => _errors.Any(e => e.Value.Any());
     /// <summary>
@@ -484,7 +540,7 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
 
     #endregion
 
-    private async void LoadData()
+    private async Task LoadData()
     {
         await Task.Run(() =>
         {
@@ -551,7 +607,7 @@ public class TransactionViewModel : BindableBase, INotifyDataErrorInfo, IDisposa
             if (res.State)
             {
                 UpdateTransactionRecords();
-                CommonExtension.ShowDialog("交易成功！");
+                CommonExtension.ShowDialog(LanguageManager.Instance["TransactionSuccess"]);
             }
             else
             {

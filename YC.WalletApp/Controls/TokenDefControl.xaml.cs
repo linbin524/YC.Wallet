@@ -74,8 +74,21 @@ namespace YC.WalletApp.Controls
 
         private void InitializeTokenDef_Click(object sender, RoutedEventArgs e)
         {
-           var vm = this.DataContext as TokenDefViewModel;
-            vm.InitializeTokenDef();
+            var vm = this.DataContext as TokenDefViewModel;
+            
+            // 显示确认对话框，只有确认后才执行初始化
+            CommonExtension.ShowConfirmDialog(
+                title: LanguageManager.Instance["InitializeTokenDefConfirmTitle"],
+                content: LanguageManager.Instance["InitializeTokenDefConfirmContent"],
+                callback: (confirmed) =>
+                {
+                    if (confirmed)
+                    {
+                        // 只有点击确认后才执行初始化
+                        vm.InitializeTokenDef();
+                    }
+                }
+            );
         }
 
         #region 全选复选框事件处理

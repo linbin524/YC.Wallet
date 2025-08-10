@@ -16,7 +16,7 @@ using YC.WalletApp.Extension;
 
 namespace YC.WalletApp.ViewModels
 {
-    public class TokenDefViewModel : BindableBase
+    public class TokenDefViewModel : BindableBase, IDisposable
     {
         #region 基础定义
        
@@ -49,6 +49,7 @@ namespace YC.WalletApp.ViewModels
         private TokenDef newTokenDef;
         private TokenDef editedTokenDef;
         private string targetPageNumber;
+        #endregion
 
         #region 翻页定义
 
@@ -98,18 +99,9 @@ namespace YC.WalletApp.ViewModels
             {
                 if (SetProperty(ref selectedTokenDef, value))
                 {
+                    // 当选中项变化时，通知UI更新编辑和删除按钮状态
                     RaisePropertyChanged(nameof(CanEdit));
                     RaisePropertyChanged(nameof(CanDelete));
-                    if (value != null)
-                    {
-                        EditedTokenDef = new TokenDef
-                        {
-                            Mint = value.Mint,
-                            Name = value.Name,
-                            Symbol = value.Symbol,
-                            DecimalPlaces = value.DecimalPlaces
-                        };
-                    }
                 }
             }
         }
@@ -117,7 +109,6 @@ namespace YC.WalletApp.ViewModels
         public bool CanEdit => SelectedTokenDef != null;
 
         public bool CanDelete => TokenDefs != null && TokenDefs.Any(t => t.IsSelected);
-
 
         public bool IsAddPopupOpen
         {
@@ -143,24 +134,17 @@ namespace YC.WalletApp.ViewModels
             set => SetProperty(ref editedTokenDef, value);
         }
 
-
         public ICommand AddTokenDefCommand { get; }
         public ICommand EditTokenDefCommand { get; }
         public ICommand DeleteTokenDefCommand { get; }
         public ICommand InitializeTokenDefCommand { get; }
-
         public ICommand AddConfirmCommand { get; }
         public ICommand AddCancelCommand { get; }
         public ICommand EditConfirmCommand { get; }
         public ICommand EditCancelCommand { get; }
-
         public ICommand CheckAllCommand { get; }
         public ICommand SelectAllCommand { get; }  // 新增命令 
-
         #endregion
-
-        #endregion
-
 
         public TokenDefViewModel()
         {
@@ -187,7 +171,41 @@ namespace YC.WalletApp.ViewModels
             #endregion
           
             UpdatePage();
+            
+            // 订阅语言切换事件
+            LanguageManager.Instance.PropertyChanged += OnLanguageChanged;
         }
+
+        #region 语言切换事件处理
+        /// <summary>
+        /// 语言切换事件处理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnLanguageChanged(object sender, PropertyChangedEventArgs e)
+        {
+            try
+            {
+                // 语言变化时重新计算分页文本，触发UI更新
+                RaisePropertyChanged(nameof(TotalPagesText));
+                RaisePropertyChanged(nameof(CurrentPageItemsText));
+                
+                // 通知所有TokenDef对象更新Display属性
+                if (TokenDefs != null)
+                {
+                    foreach (var tokenDef in TokenDefs)
+                    {
+                        tokenDef.NotifyLanguageChanged();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 记录异常但不中断程序
+                System.Diagnostics.Debug.WriteLine($"Language change error in TokenDefViewModel: {ex.Message}");
+            }
+        }
+        #endregion
 
         #region 指定方法
 
@@ -316,6 +334,7 @@ namespace YC.WalletApp.ViewModels
                 RaisePropertyChanged(nameof(CanDelete));
             }
         }
+        #endregion
 
         #region 添加编辑等事件处理方法
         private void OpenAddPopup()
@@ -349,7 +368,7 @@ namespace YC.WalletApp.ViewModels
             }
             else
             {
-                CommonExtension.ShowDialog("Decimal Places 必须为整数。");
+                CommonExtension.ShowDialog(LanguageManager.Instance["DecimalPlacesMustBeInteger"]);
             }
         }
 
@@ -377,7 +396,7 @@ namespace YC.WalletApp.ViewModels
             }
             else
             {
-                CommonExtension.ShowDialog("Decimal Places 必须为整数。");
+                CommonExtension.ShowDialog(LanguageManager.Instance["DecimalPlacesMustBeInteger"]);
             }
         }
 
@@ -394,14 +413,14 @@ namespace YC.WalletApp.ViewModels
             var selectedItems = TokenDefs.Where(t => t.IsSelected).ToList();
             if (selectedItems.Count == 0)
             {
-                CommonExtension.ShowDialog("请勾选要删除的选项.");
+                CommonExtension.ShowDialog(LanguageManager.Instance["PleaseCheckItemsToDelete"]);
                 return;
             }
 
             var deleleList = selectedItems.Select(x => x.Id).ToList();
             var res = SQLiteUtils._freesql.Delete<TokenDefEntity>(deleleList).ExecuteAffrows();
             UpdatePage();
-            CommonExtension.ShowDialog($"共删除了{res}条数据.");
+            CommonExtension.ShowDialog(string.Format(LanguageManager.Instance["DeletedItemsCount"], res));
         } 
         #endregion
 
@@ -479,12 +498,35 @@ namespace YC.WalletApp.ViewModels
             }
             else
             {
-                CommonExtension.ShowDialog("请输入有效的页码。");
+                CommonExtension.ShowDialog(LanguageManager.Instance["PleaseEnterValidPageNumber"]);
             }
         }  
        
         #endregion
-        #endregion
+
+        /// <summary>
+        /// 实现IDisposable接口的Dispose方法
+        /// </summary>
+        public void Dispose()
+        {
+            // 取消订阅语言切换事件
+            if (LanguageManager.Instance != null)
+            {
+                LanguageManager.Instance.PropertyChanged -= OnLanguageChanged;
+            }
+
+            // 取消订阅所有TokenDef的PropertyChanged事件
+            if (TokenDefs != null)
+            {
+                foreach (var tokenDef in TokenDefs)
+                {
+                    tokenDef.PropertyChanged -= TokenDef_PropertyChanged;
+                }
+            }
+
+            // 清理资源
+            GC.SuppressFinalize(this);
+        }
     }
 
     public class TokenDef: BindableBase
@@ -494,6 +536,16 @@ namespace YC.WalletApp.ViewModels
         public void SetParentViewModel(TokenDefViewModel parent)
         {
             _parentViewModel = parent;
+        }
+
+        /// <summary>
+        /// 通知语言变化，用于更新显示属性
+        /// </summary>
+        public void NotifyLanguageChanged()
+        {
+            // 当语言变化时，通知UI更新相关属性
+            RaisePropertyChanged(nameof(Name));
+            RaisePropertyChanged(nameof(Symbol));
         }
 
         public long Id { get; set; }

@@ -183,6 +183,40 @@ namespace YC.WalletApp.Extension
                 vm.RunDialogCommand.Execute(null);
             }
         }
+
+        /// <summary>
+        /// 显示确认对话框
+        /// </summary>
+        /// <param name="title">对话框标题</param>
+        /// <param name="content">对话框内容</param>
+        /// <param name="container">依赖注入容器</param>
+        /// <param name="dialogIdentifier">对话框标识符</param>
+        /// <param name="callback">确认回调，参数为bool类型，true表示确认，false表示取消</param>
+        public static void ShowConfirmDialog(string title, string content, Action<bool> callback, IContainerExtension container = null, string dialogIdentifier = "SecondDialog")
+        {
+            ConfirmDialogViewModel vm;
+            if (container != null)
+            {
+                vm = container.Resolve<ConfirmDialogViewModel>();
+                vm._container = container;
+            }
+            else
+            {
+                vm = new ConfirmDialogViewModel();
+            }
+            
+            vm.Title = title;
+            vm.Content = content;
+            vm.DialogIdentifier = dialogIdentifier;
+            vm.Callback = callback;
+            
+            // 检查命令是否可以执行
+            if (vm.RunDialogCommand.CanExecute(null))
+            {
+                // 执行命令
+                vm.RunDialogCommand.Execute(null);
+            }
+        }
         #endregion
 
     }
